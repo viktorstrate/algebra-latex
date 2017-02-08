@@ -1,0 +1,9 @@
+{
+  "name": "latex-mathify",
+  "version": "1.0.0",
+  "description": "Parse Latex math to a regular math string",
+  "main": "index.js",
+  "repository": "https://github.com/viktorstrate/latex-mathify.git",
+  "author": "viktorstrate <viktorstrate@gmail.com>",
+  "license": "MIT"
+}
