@@ -1,6 +1,9 @@
 {
   "name": "latex-mathify",
   "version": "0.1.0",
+  "scripts": {
+    "build": "./node_modules/.bin/babel src -d lib"
+  },
   "description": "Parse Latex math to a regular math string",
   "main": "index.js",
   "repository": "https://github.com/viktorstrate/latex-mathify.git",
@@ -11,5 +14,10 @@
     "eslint-config-standard": "^6.2.1",
     "eslint-plugin-promise": "^3.4.1",
     "eslint-plugin-standard": "^2.0.1"
+  },
+  "dependencies": {
+    "algebra": "^0.12.0",
+    "babel-cli": "^6.22.2",
+    "babel-preset-es2016": "^6.22.0"
   }
 }
