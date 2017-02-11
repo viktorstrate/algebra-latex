@@ -2,7 +2,8 @@
   "name": "latex-mathify",
   "version": "0.1.0",
   "scripts": {
-    "build": "./node_modules/.bin/babel src -d lib"
+    "build": "./node_modules/.bin/babel src -d lib",
+    "start": "node lib/" 
   },
   "description": "Parse Latex math to a regular math string",
   "main": "index.js",
@@ -18,6 +19,6 @@
   "dependencies": {
     "algebra": "^0.12.0",
     "babel-cli": "^6.22.2",
-    "babel-preset-es2016": "^6.22.0"
+    "babel-preset-env": "^1.1.8"
   }
 }

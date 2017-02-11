@@ -1,18 +1,4 @@
-const Parser = (latexMath) => {
-  const rawLatex = latexMath
+import parseLatex from './parser'
 
-  const getRawLatex = () => {
-    return rawLatex
-  }
-
-  const mathified = () => {
-    return ''
-  }
-
-  return {
-    getRawLatex,
-    mathified
-  }
-}
-
-export default Parser
+const structure = parseLatex('\\frac{1+1}{2}+21 \\cdot b')
+console.log(JSON.stringify(structure, null, 2))
