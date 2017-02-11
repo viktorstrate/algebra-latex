@@ -1,3 +1,9 @@
+/**
+ * Parse a latex math string, to an object
+ * @param  {string} latex A latex string like "\frac{1}{2}"
+ * @return {array} An array containing the content of the input,
+ *                     formatted with objects with a type and a value field
+ */
 const parseLatex = (latex) => {
   let findingToken = false
   let findingNumber = false
@@ -7,6 +13,19 @@ const parseLatex = (latex) => {
 
   for (let i = 0; i < latex.length; i++) {
     const char = latex.charAt(i)
+    const lastIndex = i === latex.length - 1
+
+    if (lastIndex && findingToken) {
+      currentToken += char
+      findingToken = false
+      console.log('Found token', currentToken)
+      structure.push({
+        type: 'token',
+        value: currentToken
+      })
+      currentToken = ''
+      continue
+    }
 
     if (findingToken) {
       if (char.match(/[a-zA-Z]/g)) {
@@ -24,9 +43,9 @@ const parseLatex = (latex) => {
     }
 
     console.log('Finding number', findingNumber)
-    console.log('Last in latex', i === latex.length - 1)
+    console.log('Last in latex', lastIndex)
     // If last character in latex
-    if (i === latex.length - 1) {
+    if (i === lastIndex) {
       if (char.match(/[\d.,]/g)) {
         if (findingNumber) {
           currentNumber += char

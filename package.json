@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "scripts": {
     "build": "./node_modules/.bin/babel src -d lib",
-    "start": "node lib/" 
+    "start": "node lib/"
   },
   "description": "Parse Latex math to a regular math string",
   "main": "index.js",
