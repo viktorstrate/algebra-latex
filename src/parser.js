@@ -60,7 +60,7 @@ const parseLatex = (latex) => {
       continue
     } else {
       if (char === '{') {
-        const length = matchingBracketLength(latex.substr(i))
+        const length = matchingBracketLength(latex.substr(i), 'curly')
         const newLatex = latex.substr(i + 1, length - 1)
         console.log('New Latex', newLatex)
 
@@ -113,8 +113,34 @@ const parseLatex = (latex) => {
   return structure
 }
 
-const matchingBracketLength = (latex) => {
+/**
+ * Will find the length to the matching bracket, in provided string
+ * @param  {string} latex       A string of latex, starting from where the search should begin
+ * @param  {string} bracketType The type of bracket to search for.
+ *                                  Can be one of the following ['normal', 'curly', 'square']
+ * @return {number}             The length from start of provided string,
+ *                                  to the location of the matching bracket
+ */
+const matchingBracketLength = (latex, bracketType) => {
   console.log('Finding matching bracket for text:', latex)
+
+  let startBracket = ''
+  let endBracket = ''
+
+  switch (bracketType) {
+    case 'normal':
+      startBracket = '('
+      endBracket = ')'
+      break
+    case 'curly':
+      startBracket = '{'
+      endBracket = '}'
+      break
+    case 'square':
+      startBracket = '['
+      endBracket = ']'
+      break
+  }
 
   let bracketDepth = 0
 
@@ -122,10 +148,10 @@ const matchingBracketLength = (latex) => {
     const char = latex.charAt(i)
     console.log('-- Char:', char)
 
-    if (char === '{') {
+    if (char === startBracket) {
       bracketDepth++
       console.log('-- Found starting bracket, depth', bracketDepth)
-    } else if (char === '}') {
+    } else if (char === endBracket) {
       if (bracketDepth === 1) {
         console.log('-- Found original closing bracket at position', i)
         return i

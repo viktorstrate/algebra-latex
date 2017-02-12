@@ -40,6 +40,14 @@ const formatter = (parsedLatex) => {
           return new Error('Fraction must have 2 following parameters')
         }
       }
+
+      if (item.value === 'cdot' || item.value === 'times' || item.value === 'ast') {
+        formattedString += '*'
+      }
+
+      if (item.value === 'div') {
+        formattedString += '/'
+      }
     }
   }
 
