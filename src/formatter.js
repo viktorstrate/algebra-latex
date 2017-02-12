@@ -21,6 +21,10 @@ const formatter = (parsedLatex) => {
       formattedString += item.value
     }
 
+    if (item.type === 'variable') {
+      formattedString += item.value
+    }
+
     if (item.type === 'token') {
       console.log('Handling token', item.value)
 
@@ -44,10 +48,10 @@ const formatter = (parsedLatex) => {
       if (item.value === 'sqrt') {
         if (parsedLatex[i + 1].type === 'group') {
           console.log('Found square root')
-          formattedString += 'sqrt(' + parsedLatex[i + 1].value + ')'
+          formattedString += 'sqrt' + formatter(parsedLatex[i + 1].value)
+        } else {
+          console.log('Square root did not have any following parameters, ignoring')
         }
-      } else {
-        console.log('Square root did not have any following parameters, ignoring')
       }
 
       if (item.value === 'cdot' || item.value === 'times' || item.value === 'ast') {
