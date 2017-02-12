@@ -25,6 +25,10 @@ const formatter = (parsedLatex) => {
       formattedString += item.value
     }
 
+    if (item.type === 'group') {
+      formattedString += formatter(item.value)
+    }
+
     if (item.type === 'token') {
       console.log('Handling token', item.value)
 
