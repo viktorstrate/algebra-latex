@@ -21,5 +21,5 @@ export default {
   phi: 'ϕ',
   chi: 'χ',
   psi: 'ψ',
-  omaga: 'ω'
+  omega: 'ω'
 }

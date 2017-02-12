@@ -13,19 +13,6 @@ const parseLatex = (latex) => {
 
   for (let i = 0; i < latex.length; i++) {
     const char = latex.charAt(i)
-    const lastIndex = i === latex.length - 1
-
-    if (lastIndex && findingToken) {
-      currentToken += char
-      findingToken = false
-      console.log('Found token', currentToken)
-      structure.push({
-        type: 'token',
-        value: currentToken
-      })
-      currentToken = ''
-      continue
-    }
 
     if (findingToken) {
       if (char.match(/[a-zA-Z]/g)) {
@@ -39,31 +26,6 @@ const parseLatex = (latex) => {
           value: currentToken
         })
         currentToken = ''
-      }
-    }
-
-    console.log('Finding number', findingNumber)
-    console.log('Last in latex', lastIndex)
-    // If last character in latex
-    if (i === lastIndex) {
-      if (char.match(/[\d.,]/g)) {
-        if (findingNumber) {
-          currentNumber += char
-          console.log('Number found after string ended', currentNumber)
-          structure.push({
-            type: 'number',
-            value: currentNumber
-          })
-
-          currentNumber = ''
-          findingNumber = false
-        } else {
-          console.log('New number found after string ended', char)
-          structure.push({
-            type: 'number',
-            value: char
-          })
-        }
       }
     }
 
@@ -130,6 +92,22 @@ const parseLatex = (latex) => {
         })
       }
     }
+  }
+
+  if (findingNumber) {
+    console.log('Wrapping up number')
+    structure.push({
+      type: 'number',
+      value: currentNumber
+    })
+  }
+
+  if (findingToken) {
+    console.log('Wrapping up token')
+    structure.push({
+      type: 'token',
+      value: currentToken
+    })
   }
 
   return structure
