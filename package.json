@@ -1,6 +1,6 @@
 {
-  "name": "latex-mathify",
-  "version": "0.1.1",
+  "name": "algebra-latex",
+  "version": "0.1.2",
   "scripts": {
     "build": "./node_modules/.bin/babel src -d lib",
     "start": "node lib/"
