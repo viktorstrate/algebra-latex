@@ -1,4 +1,5 @@
 import greekLetters from './tokens/greek-letters'
+import logger from './logger'
 
 /**
  * Will format a parsed latex object, to a calculatable string
@@ -30,18 +31,18 @@ const formatter = (parsedLatex) => {
     }
 
     if (item.type === 'token') {
-      console.log('Handling token', item.value)
+      logger.debug('Handling token' + item.value)
 
       if (greekLetters[item.value.toLowerCase()] !== undefined) {
         const upperCase = item.value.charAt(0).toUpperCase() === item.value.charAt(0)
         const letter = upperCase ? greekLetters[item.value.toLowerCase()].toUpperCase() : greekLetters[item.value.toLowerCase()]
-        console.log('greek letter', letter)
+        logger.debug('greek letter' + letter)
         formattedString += letter
       }
 
       if (item.value === 'frac') {
         if (parsedLatex[i + 1].type === 'group' && parsedLatex[i + 2].type === 'group') {
-          console.log('Found fraction')
+          logger.debug('Found fraction')
           formattedString += formatter(parsedLatex[i + 1].value) + '/' + formatter(parsedLatex[i + 2].value)
           i += 2
         } else {
@@ -51,10 +52,10 @@ const formatter = (parsedLatex) => {
 
       if (item.value === 'sqrt') {
         if (parsedLatex[i + 1].type === 'group') {
-          console.log('Found square root')
+          logger.debug('Found square root')
           formattedString += 'sqrt' + formatter(parsedLatex[i + 1].value)
         } else {
-          console.log('Square root did not have any following parameters, ignoring')
+          logger.debug('Square root did not have any following parameters, ignoring')
         }
       }
 

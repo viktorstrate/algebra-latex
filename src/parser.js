@@ -1,3 +1,5 @@
+import logger from './logger'
+
 /**
  * Parse a latex math string, to an object
  * @param  {string} latex A latex string like "\frac{1}{2}"
@@ -20,7 +22,7 @@ const parseLatex = (latex) => {
         continue
       } else {
         findingToken = false
-        console.log('Found token', currentToken)
+        logger.debug('Found token ' + currentToken)
         structure.push({
           type: 'token',
           value: currentToken
@@ -32,11 +34,11 @@ const parseLatex = (latex) => {
     if (findingNumber) {
       // Check for number
       if (char.match(/[\d.,]/g)) {
-        console.log('Found next number in sequence:', char)
+        logger.debug('Found next number in sequence:' + char)
         currentNumber += char
         continue
       } else {
-        console.log('Number found', currentNumber)
+        logger.debug('Number found' + currentNumber)
         structure.push({
           type: 'number',
           value: currentNumber
@@ -47,7 +49,7 @@ const parseLatex = (latex) => {
       }
     } else {
       if (char.match(/[\d.,]/g)) {
-        console.log('Found a new number:', char)
+        logger.debug('Found a new number:' + char)
         currentNumber += char
         findingNumber = true
         continue
@@ -62,7 +64,7 @@ const parseLatex = (latex) => {
       if (char === '{') {
         const length = matchingBracketLength(latex.substr(i), 'curly')
         const newLatex = latex.substr(i + 1, length - 1)
-        console.log('New Latex', newLatex)
+        logger.debug('New Latex' + newLatex)
 
         structure.push({
           type: 'group',
@@ -75,7 +77,7 @@ const parseLatex = (latex) => {
 
       // Check for operator
       if (char.match(/[+\-*/()=^_]/g)) {
-        console.log('Found operator', char)
+        logger.debug('Found operator' + char)
         structure.push({
           type: 'operator',
           value: char
@@ -85,7 +87,7 @@ const parseLatex = (latex) => {
 
       // Check for variable
       if (char.match(/[a-zA-Z]/g)) {
-        console.log('Found variable', char)
+        logger.debug('Found variable' + char)
         structure.push({
           type: 'variable',
           value: char
@@ -95,7 +97,7 @@ const parseLatex = (latex) => {
   }
 
   if (findingNumber) {
-    console.log('Wrapping up number')
+    logger.debug('Wrapping up number')
     structure.push({
       type: 'number',
       value: currentNumber
@@ -103,7 +105,7 @@ const parseLatex = (latex) => {
   }
 
   if (findingToken) {
-    console.log('Wrapping up token')
+    logger.debug('Wrapping up token')
     structure.push({
       type: 'token',
       value: currentToken
@@ -122,7 +124,7 @@ const parseLatex = (latex) => {
  *                                  to the location of the matching bracket
  */
 const matchingBracketLength = (latex, bracketType) => {
-  console.log('Finding matching bracket for text:', latex)
+  logger.debug('Finding matching bracket for text:', latex)
 
   let startBracket = ''
   let endBracket = ''
@@ -146,19 +148,19 @@ const matchingBracketLength = (latex, bracketType) => {
 
   for (let i = 0; i < latex.length; i++) {
     const char = latex.charAt(i)
-    console.log('-- Char:', char)
+    logger.debug('-- Char:' + char)
 
     if (char === startBracket) {
       bracketDepth++
-      console.log('-- Found starting bracket, depth', bracketDepth)
+      logger.debug('-- Found starting bracket, depth' + bracketDepth)
     } else if (char === endBracket) {
       if (bracketDepth === 1) {
-        console.log('-- Found original closing bracket at position', i)
+        logger.debug('-- Found original closing bracket at position' + i)
         return i
       }
 
       bracketDepth--
-      console.log('-- Found closing bracket, depth', bracketDepth)
+      logger.debug('-- Found closing bracket, depth' + bracketDepth)
     }
   }
 
