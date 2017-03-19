@@ -24,6 +24,6 @@ module.exports = class AlgebraLatex {
     if (this.parsedAlgebra == null) {
       this.parsedAlgebra = algebra.parse(this.toMath())
     }
-    return this.parsedAlgebra.toString()
+    return this.parsedAlgebra
   }
 }
