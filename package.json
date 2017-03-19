@@ -2,11 +2,11 @@
   "name": "algebra-latex",
   "version": "0.2.0",
   "scripts": {
-    "build": "./node_modules/.bin/babel src -d lib",
+    "install": "./node_modules/.bin/babel src -d lib",
     "start": "node lib/"
   },
   "description": "Parse Latex math to a regular math string",
-  "main": "index.js",
+  "main": "lib/index.js",
   "repository": "https://github.com/viktorstrate/latex-mathify.git",
   "author": "viktorstrate <viktorstrate@gmail.com>",
   "license": "MIT",
