@@ -3,7 +3,8 @@
   "version": "0.2.0",
   "scripts": {
     "install": "./node_modules/.bin/babel src -d lib",
-    "start": "node ."
+    "start": "node .",
+    "test": "mocha --compilers js:babel-core/register"
   },
   "description": "Parse Latex math to a regular math string",
   "main": "lib/index.js",
@@ -14,7 +15,8 @@
     "eslint": "^3.15.0",
     "eslint-config-standard": "^6.2.1",
     "eslint-plugin-promise": "^3.4.1",
-    "eslint-plugin-standard": "^2.0.1"
+    "eslint-plugin-standard": "^2.0.1",
+    "mocha": "^3.2.0"
   },
   "dependencies": {
     "algebra.js": "^0.2.6",

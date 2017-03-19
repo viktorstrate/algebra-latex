@@ -63,6 +63,9 @@ const parseLatex = (latex) => {
     } else {
       if (char === '{') {
         const length = matchingBracketLength(latex.substr(i), 'curly')
+
+        if (length instanceof Error) return length
+
         const newLatex = latex.substr(i + 1, length - 1)
         logger.debug('New Latex' + newLatex)
 
