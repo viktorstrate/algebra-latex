@@ -5,7 +5,7 @@ import formatLatex from './formatter'
 // Functors
 const stripParenthesis = mathString => mathString.substr(1, mathString.length - 2)
 
-export default class AlgebraLatex {
+module.exports = class AlgebraLatex {
   constructor (latex) {
     this.texInput = latex
 
