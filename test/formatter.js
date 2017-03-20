@@ -3,7 +3,7 @@ import assert from 'assert'
 
 describe('formatter', () => {
   it('should format latex', () => {
-    const parsedLatex = [
+    const parsedLatex1 = [
       {
         type: 'token',
         value: 'frac'
@@ -53,7 +53,23 @@ describe('formatter', () => {
       }
     ]
 
-    assert.equal(formatter(parsedLatex), '((2^(3)+3)/(+3))', 'Should format valid object')
+    const parsedLatex2 = [
+      {
+        type: 'token',
+        value: 'sqrt'
+      }, {
+        type: 'group',
+        value: [
+          {
+            type: 'number',
+            value: '123'
+          }
+        ]
+      }
+    ]
+
+    assert.equal(formatter(parsedLatex1), '((2^(3)+3)/(+3))', 'Long latex example')
+    assert.equal(formatter(parsedLatex2), '(sqrt(123))', 'sqrt example')
   })
 
   describe('error handling', () => {

@@ -54,6 +54,7 @@ const formatter = (parsedLatex) => {
         if (parsedLatex[i + 1].type === 'group') {
           logger.debug('Found square root')
           formattedString += 'sqrt' + formatter(parsedLatex[i + 1].value)
+          i++
         } else {
           logger.debug('Square root did not have any following parameters, ignoring')
         }
