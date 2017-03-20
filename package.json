@@ -5,9 +5,10 @@
     "build": "./node_modules/.bin/babel src -d lib",
     "start": "node .",
     "test": "mocha --compilers js:babel-core/register",
+    "test-watch": "mocha --compilers js:babel-core/register watch",
     "prepublish": "npm run build"
   },
-  "description": "Parse Latex math to a regular math string",
+  "description": "Parse Latex math to a regular math string or algebra.js",
   "main": "./lib/index.js",
   "repository": "https://github.com/viktorstrate/latex-mathify.git",
   "author": "viktorstrate <viktorstrate@gmail.com>",
