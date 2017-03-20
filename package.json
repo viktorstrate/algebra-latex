@@ -1,13 +1,14 @@
 {
   "name": "algebra-latex",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "scripts": {
-    "install": "./node_modules/.bin/babel src -d lib",
+    "build": "./node_modules/.bin/babel src -d lib",
     "start": "node .",
-    "test": "mocha --compilers js:babel-core/register"
+    "test": "mocha --compilers js:babel-core/register",
+    "prepublish": "npm run build"
   },
   "description": "Parse Latex math to a regular math string",
-  "main": "lib/index.js",
+  "main": "./lib/index.js",
   "repository": "https://github.com/viktorstrate/latex-mathify.git",
   "author": "viktorstrate <viktorstrate@gmail.com>",
   "license": "MIT",
