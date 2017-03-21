@@ -14,3 +14,17 @@ const latexObj = new AlgebraLatex(latexInput)
 
 console.log(latexObj.toMath()) // output: 3*x+2^(10)=10
 ```
+
+
+### Parse to algebra.js or algebrite
+
+continuing from example above
+```javascript
+...
+
+// For algebra.js
+algebra.parse(latexObj.toMath())
+
+// For algebrite
+Algebrite.eval(latexObj.toMath())
+```
