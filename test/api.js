@@ -34,6 +34,13 @@ describe('API tests', () => {
     it('should solve expression', () => {
       assert.equal(algebraJSExpression.toString(), '1/3x')
     })
+
+    it('should parse greek letters correctly', () => {
+      const latex = '\\alpha + \\alpha - \\Delta'
+      const obj = new AlgebraLatex(latex)
+
+      assert.equal(obj.toAlgebra().toTex(), '2\\alpha - \\Delta')
+    })
   })
 
   describe('algebrite', () => {

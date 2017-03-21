@@ -1,6 +1,7 @@
 import parseLatex from './parser'
 import formatLatex from './formatter'
 import logger from './logger'
+import * as greekLetters from './tokens/greek-letters'
 
 // Import optional dependencies
 let algebraJS = null
@@ -67,7 +68,18 @@ class AlgebraLatex {
     if (algebraJS == null) {
       return new Error('Optional module is not installed, install \'algebra.js\' to use this function')
     }
-    return algebraJS.parse(this.toMath())
+
+    let mathToParse = this.toMath()
+
+    greekLetters.letters.forEach((letter) => {
+      mathToParse = mathToParse.split(letter.symbol).join(letter.name)
+      mathToParse = mathToParse.split(greekLetters.toUpperCase(letter.symbol))
+        .join(greekLetters.toUpperCase(letter.name))
+    })
+
+    console.log('Math to parse', mathToParse)
+
+    return algebraJS.parse(mathToParse)
   }
 
   /**
