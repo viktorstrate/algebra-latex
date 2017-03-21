@@ -7,3 +7,4 @@ test/
 .travis.yml
 yarn.lock
 yarn-error.log
+.yarnclean

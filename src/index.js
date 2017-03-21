@@ -1,4 +1,3 @@
-import algebra from 'algebra.js'
 import parseLatex from './parser'
 import formatLatex from './formatter'
 import logger from './logger'
@@ -20,12 +19,5 @@ module.exports = class AlgebraLatex {
     }
 
     return this.formattedMath
-  }
-
-  toAlgebra () {
-    if (this.parsedAlgebra == null) {
-      this.parsedAlgebra = algebra.parse(this.toMath())
-    }
-    return this.parsedAlgebra
   }
 }
