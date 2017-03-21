@@ -1,4 +1,4 @@
-import greekLetters from './tokens/greek-letters'
+import * as greekLetters from './tokens/greek-letters'
 import logger from './logger'
 
 /**
@@ -31,12 +31,11 @@ const formatter = (parsedLatex) => {
     }
 
     if (item.type === 'token') {
-      logger.debug('Handling token' + item.value)
+      logger.debug('Handling token: ' + item.value)
 
-      if (greekLetters[item.value.toLowerCase()] !== undefined) {
-        const upperCase = item.value.charAt(0).toUpperCase() === item.value.charAt(0)
-        const letter = upperCase ? greekLetters[item.value.toLowerCase()].toUpperCase() : greekLetters[item.value.toLowerCase()]
-        logger.debug('greek letter' + letter)
+      if (greekLetters.getSymbol(item.value) !== null) {
+        const letter = greekLetters.getSymbol(item.value)
+        logger.debug('greek letter ' + letter)
         formattedString += letter
       }
 

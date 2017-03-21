@@ -5,8 +5,9 @@
     "build": "babel src -d lib",
     "start": "node .",
     "lint": "eslint ./src",
-    "test": "mocha --compilers js:babel-core/register && npm run lint",
+    "test": "npm run mocha && npm run lint",
     "test-watch": "mocha --compilers js:babel-core/register watch",
+    "mocha": "mocha --compilers js:babel-core/register",
     "prepublish": "npm run build"
   },
   "description": "Parse Latex math to a regular math string or algebra.js",

@@ -72,6 +72,42 @@ describe('formatter', () => {
     assert.equal(formatter(parsedLatex2), '(sqrt(123))', 'sqrt example')
   })
 
+  describe('greek letters', () => {
+    it('should format lower case', () => {
+      const parsedLatex = [
+        {
+          type: 'token',
+          value: 'alpha'
+        }, {
+          type: 'token',
+          value: 'delta'
+        }, {
+          type: 'token',
+          value: 'gamma'
+        }
+      ]
+
+      assert.equal(formatter(parsedLatex), '(αδγ)')
+    })
+
+    it('should format upper case', () => {
+      const parsedLatex = [
+        {
+          type: 'token',
+          value: 'Alpha'
+        }, {
+          type: 'token',
+          value: 'Delta'
+        }, {
+          type: 'token',
+          value: 'Gamma'
+        }
+      ]
+
+      assert.equal(formatter(parsedLatex), '(ΑΔΓ)')
+    })
+  })
+
   describe('error handling', () => {
     it('Should return error for fragments', () => {
       const latex1 = [

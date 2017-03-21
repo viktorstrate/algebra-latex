@@ -2,7 +2,7 @@ import parser from '../src/parser'
 import assert from 'assert'
 
 describe('parser', () => {
-  it('should parse latex', () => {
+  it('should parse basic latex example', () => {
     const latex = '\\sqrt{  \\frac{1\\cdot 2   + 3}{\\Delta t} -3 }* 54/399'
 
     const expectedVal = [
@@ -83,6 +83,46 @@ describe('parser', () => {
     ]
 
     assert.deepEqual(parser(latex), expectedVal)
+  })
+
+  describe('greek letters', () => {
+    it('should parse lower case', () => {
+      const latex = '\\alpha\\delta\\gamma'
+
+      const expected = [
+        {
+          type: 'token',
+          value: 'alpha'
+        }, {
+          type: 'token',
+          value: 'delta'
+        }, {
+          type: 'token',
+          value: 'gamma'
+        }
+      ]
+
+      assert.deepEqual(parser(latex), expected)
+    })
+
+    it('should parse upper case', () => {
+      const latex = '\\Alpha\\Delta\\Gamma'
+
+      const expected = [
+        {
+          type: 'token',
+          value: 'Alpha'
+        }, {
+          type: 'token',
+          value: 'Delta'
+        }, {
+          type: 'token',
+          value: 'Gamma'
+        }
+      ]
+
+      assert.deepEqual(parser(latex), expected)
+    })
   })
 
   describe('error handling', () => {
