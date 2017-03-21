@@ -4,7 +4,8 @@
   "scripts": {
     "build": "babel src -d lib",
     "start": "node .",
-    "test": "mocha --compilers js:babel-core/register && eslint ./src",
+    "lint": "eslint ./src",
+    "test": "mocha --compilers js:babel-core/register && npm run lint",
     "test-watch": "mocha --compilers js:babel-core/register watch",
     "prepublish": "npm run build"
   },

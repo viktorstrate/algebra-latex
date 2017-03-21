@@ -1,4 +1,4 @@
-# latex-algebra.js
+# algebra-latex
 [![Build Status](https://travis-ci.org/viktorstrate/algebra-latex.svg?branch=master)](https://travis-ci.org/viktorstrate/algebra-latex)
 
 An npm module for parsing LaTeX math to a regular math string,
