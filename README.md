@@ -10,21 +10,31 @@ that can be parsed to other algebra or math libraries like [algebrite](http://al
 const AlgebraLatex = require('algebra-latex')
 
 const latexInput = '3*x+2^{10}=10'
-const latexObj = new AlgebraLatex(latexInput)
+const algebraObj = new AlgebraLatex(latexInput)
 
 console.log(latexObj.toMath()) // output: 3*x+2^(10)=10
 ```
 
 
-### Parse to algebra.js or algebrite
+### Parse to other libraries
 
-continuing from example above
+__Supported libraries__
+- [algebra.js](http://algebra.js.org/)
+- [algebrite](http://algebrite.org/)
+- [coffeequate](http://coffeequate.readthedocs.io/)
+
+> NOTE: The above libraries are optional, and has to be installed before use
+
+*continuing from example above*
 ```javascript
 ...
 
 // For algebra.js
-algebra.parse(latexObj.toMath())
+algebraObj.toAlgebra() // Will either return an algebra.js expression or equation
 
 // For algebrite
-Algebrite.eval(latexObj.toMath())
+algebraObject.toAlgebrite()
+
+// For coffequate
+algebraObject.toCoffeequate()
 ```
