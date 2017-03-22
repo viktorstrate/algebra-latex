@@ -12,7 +12,7 @@ const AlgebraLatex = require('algebra-latex')
 const latexInput = '3*x+2^{10}=10'
 const algebraObj = new AlgebraLatex(latexInput)
 
-console.log(latexObj.toMath()) // output: 3*x+2^(10)=10
+console.log(algebraObj.toMath()) // output: 3*x+2^(10)=10
 ```
 
 
