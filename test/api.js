@@ -54,6 +54,13 @@ describe('API tests', () => {
     it('should fail to parse equation', () => {
       assert.throws(() => { throw algebriteEquation }, /Algebrite can not handle equations, only expressions/)
     })
+
+    it('should parse greek letters correctly', () => {
+      const latex = '\\alpha + \\alpha - \\Delta'
+      const obj = new AlgebraLatex(latex)
+
+      assert.equal(obj.toAlgebrite().toString(), '-Delta + 2 alpha')
+    })
   })
 
   describe('coffeequate', () => {

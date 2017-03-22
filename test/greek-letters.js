@@ -44,6 +44,11 @@ describe('greek letters', () => {
     it('should set symbol to uppercase', () => {
       assert.equal(greekLetters.toUpperCase(lowerSymbol), upperSymbol)
     })
+
+    it('should convert symbols to names', () => {
+      const latex = 'Δ+Δ-α*A'
+      assert.equal(greekLetters.convertSymbols(latex), 'Delta+Delta-alpha*A')
+    })
   })
 
   describe('invalid input', () => {

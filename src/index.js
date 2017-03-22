@@ -70,14 +70,7 @@ class AlgebraLatex {
     }
 
     let mathToParse = this.toMath()
-
-    greekLetters.letters.forEach((letter) => {
-      mathToParse = mathToParse.split(letter.symbol).join(letter.name)
-      mathToParse = mathToParse.split(greekLetters.toUpperCase(letter.symbol))
-        .join(greekLetters.toUpperCase(letter.name))
-    })
-
-    console.log('Math to parse', mathToParse)
+    mathToParse = greekLetters.convertSymbols(mathToParse)
 
     return algebraJS.parse(mathToParse)
   }
@@ -95,7 +88,10 @@ class AlgebraLatex {
       return new Error('Algebrite can not handle equations, only expressions')
     }
 
-    return algebrite.eval(this.toMath())
+    let mathToParse = this.toMath()
+    mathToParse = greekLetters.convertSymbols(mathToParse)
+
+    return algebrite.eval(mathToParse)
   }
 
   /**

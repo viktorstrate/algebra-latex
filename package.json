@@ -1,6 +1,6 @@
 {
   "name": "algebra-latex",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "scripts": {
     "build": "babel src -d lib",
     "start": "node .",

@@ -1,3 +1,5 @@
+import logger from '../logger'
+
 export const letters = [
   {
     name: 'alpha',
@@ -93,4 +95,15 @@ export function getName (symbol) {
   name = name.name
   if (isUpperCase(symbol)) name = toUpperCase(name)
   return name
+}
+
+export function convertSymbols (math) {
+  logger.debug('Converting math symbols ' + math)
+  letters.forEach((letter) => {
+    math = math.split(letter.symbol).join(letter.name)
+    math = math.split(toUpperCase(letter.symbol))
+      .join(toUpperCase(letter.name))
+  })
+  logger.debug('- Converted math symbols ' + math)
+  return math
 }
