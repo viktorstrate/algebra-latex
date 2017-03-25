@@ -24,8 +24,8 @@ describe('parser', () => {
                 value: '1'
               },
               {
-                type: 'token',
-                'value': 'cdot'
+                type: 'operator',
+                value: '*'
               },
               {
                 type: 'number',

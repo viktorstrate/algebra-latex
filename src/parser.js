@@ -23,10 +23,7 @@ const parseLatex = (latex) => {
       } else {
         findingToken = false
         logger.debug('Found token ' + currentToken)
-        structure.push({
-          type: 'token',
-          value: currentToken
-        })
+        parseToken(currentToken, structure)
         currentToken = ''
       }
     }
@@ -116,6 +113,22 @@ const parseLatex = (latex) => {
   }
 
   return structure
+}
+
+const parseToken = (token, structure) => {
+  switch (token) {
+    case 'cdot':
+      structure.push({
+        type: 'operator',
+        value: '*'
+      })
+      break
+    default:
+      structure.push({
+        type: 'token',
+        value: token
+      })
+  }
 }
 
 /**
