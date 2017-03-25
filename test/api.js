@@ -1,10 +1,6 @@
 import assert from 'assert'
 import AlgebraLatex from '../src/index'
 
-import algebraJS from 'algebra.js'
-import algebrite from 'algebrite'
-import coffeequate from 'coffeequate'
-
 describe('API tests', () => {
   const latexEquation = 'x+\\frac{2}{3}-4=8'
   const algebraEquation = new AlgebraLatex(latexEquation)

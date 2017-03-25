@@ -15,7 +15,7 @@ const formatter = (parsedLatex) => {
     const item = parsedLatex[i]
 
     if (item.type === 'number') {
-      if (i > 1) {
+      if (i > 0) {
         if (parsedLatex[i - 1].type !== 'number' && parsedLatex[i - 1].type !== 'operator') {
           logger.debug('Adding * before number: ' + item.value + ', previous item: ' + parsedLatex[i - 1].type)
           formattedString += '*'
@@ -31,7 +31,7 @@ const formatter = (parsedLatex) => {
     }
 
     if (item.type === 'variable') {
-      if (i > 1) {
+      if (i > 0) {
         if (parsedLatex[i - 1].type !== 'operator') {
           logger.debug('Adding * before variable: ' + item.value + ', previous item: ' + parsedLatex[i - 1].type)
           formattedString += '*'

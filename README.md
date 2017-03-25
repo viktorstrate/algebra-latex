@@ -9,10 +9,10 @@ that can be parsed to other algebra or math libraries like [algebrite](http://al
 ```javascript
 const AlgebraLatex = require('algebra-latex')
 
-const latexInput = '3*x+2^{10}=10'
+const latexInput = '\\frac{1}{\\sqrt{2}}\\cdot x=10'
 const algebraObj = new AlgebraLatex(latexInput)
 
-console.log(algebraObj.toMath()) // output: 3*x+2^(10)=10
+console.log(algebraObj.toMath()) // output: (1)/(sqrt(2))*x=10
 ```
 
 

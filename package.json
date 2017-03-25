@@ -1,10 +1,10 @@
 {
   "name": "algebra-latex",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "scripts": {
     "build": "babel src -d lib",
     "start": "node .",
-    "lint": "eslint ./src",
+    "lint": "eslint ./src ./test",
     "test": "npm run mocha && npm run lint",
     "test-watch": "mocha --compilers js:babel-core/register watch",
     "mocha": "mocha --compilers js:babel-core/register",

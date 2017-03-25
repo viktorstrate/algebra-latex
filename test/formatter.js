@@ -2,8 +2,8 @@ import formatter from '../src/formatter'
 import assert from 'assert'
 
 describe('formatter', () => {
-  it('should format latex', () => {
-    const parsedLatex1 = [
+  it('should format a general latex example', () => {
+    const parsedLatex = [
       {
         type: 'token',
         value: 'frac'
@@ -53,49 +53,88 @@ describe('formatter', () => {
       }
     ]
 
-    const parsedLatex2 = [
-      {
-        type: 'token',
-        value: 'sqrt'
-      }, {
-        type: 'group',
-        value: [
-          {
-            type: 'number',
-            value: '123'
-          }
-        ]
-      }
-    ]
+    assert.equal(formatter(parsedLatex), '((2^(3)+3)/(3))', 'Long latex example')
+  })
 
-    const parsedLatex3 = [
-      {
-        type: 'variable',
-        value: 'y'
-      }, {
-        type: 'operator',
-        value: '='
-      }, {
-        type: 'variable',
-        value: 'a'
-      }, {
-        type: 'variable',
-        value: 'x'
-      }, {
-        type: 'operator',
-        value: '+'
-      }, {
-        type: 'number',
-        value: '2'
-      }, {
-        type: 'variable',
-        value: 'b'
-      }
-    ]
+  describe('functions', () => {
+    it('should format sqrt function', () => {
+      const parsedLatex = [
+        {
+          type: 'token',
+          value: 'sqrt'
+        }, {
+          type: 'group',
+          value: [
+            {
+              type: 'number',
+              value: '123'
+            }
+          ]
+        }
+      ]
 
-    assert.equal(formatter(parsedLatex1), '((2^(3)+3)/(3))', 'Long latex example')
-    assert.equal(formatter(parsedLatex2), '(sqrt(123))', 'sqrt example')
-    assert.equal(formatter(parsedLatex3), '(y=a*x+2*b)')
+      assert.equal(formatter(parsedLatex), '(sqrt(123))', 'sqrt example')
+    })
+  })
+
+  describe('equations', () => {
+    it('should format simple equation with variables and numbers', () => {
+      const parsedLatex = [
+        {
+          type: 'variable',
+          value: 'y'
+        }, {
+          type: 'operator',
+          value: '='
+        }, {
+          type: 'variable',
+          value: 'a'
+        }, {
+          type: 'variable',
+          value: 'x'
+        }, {
+          type: 'operator',
+          value: '+'
+        }, {
+          type: 'number',
+          value: '2'
+        }, {
+          type: 'variable',
+          value: 'b'
+        }
+      ]
+
+      assert.equal(formatter(parsedLatex), '(y=a*x+2*b)')
+    })
+
+    it('should format equation with only variables', () => {
+      const parsedLatex = [
+        {
+          type: 'variable',
+          value: 'a'
+        }, {
+          type: 'variable',
+          value: 'b'
+        }, {
+          type: 'variable',
+          value: 'c'
+        }, {
+          type: 'operator',
+          value: '='
+        }, {
+          type: 'variable',
+          value: 'a'
+        }, {
+          type: 'variable',
+          value: 'b'
+        }, {
+          type: 'variable',
+          value: 'c'
+        }
+      ]
+
+      assert.equal(formatter(parsedLatex), '(a*b*c=a*b*c)')
+    })
   })
 
   describe('greek letters', () => {
