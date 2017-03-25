@@ -68,8 +68,34 @@ describe('formatter', () => {
       }
     ]
 
-    assert.equal(formatter(parsedLatex1), '((2^(3)+3)/(+3))', 'Long latex example')
+    const parsedLatex3 = [
+      {
+        type: 'variable',
+        value: 'y'
+      }, {
+        type: 'operator',
+        value: '='
+      }, {
+        type: 'variable',
+        value: 'a'
+      }, {
+        type: 'variable',
+        value: 'x'
+      }, {
+        type: 'operator',
+        value: '+'
+      }, {
+        type: 'number',
+        value: '2'
+      }, {
+        type: 'variable',
+        value: 'b'
+      }
+    ]
+
+    assert.equal(formatter(parsedLatex1), '((2^(3)+3)/(3))', 'Long latex example')
     assert.equal(formatter(parsedLatex2), '(sqrt(123))', 'sqrt example')
+    assert.equal(formatter(parsedLatex3), '(y=a*x+2*b)')
   })
 
   describe('greek letters', () => {

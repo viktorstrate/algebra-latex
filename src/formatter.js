@@ -15,14 +15,28 @@ const formatter = (parsedLatex) => {
     const item = parsedLatex[i]
 
     if (item.type === 'number') {
+      if (i > 1) {
+        if (parsedLatex[i - 1].type !== 'number' && parsedLatex[i - 1].type !== 'operator') {
+          logger.debug('Adding * before number: ' + item.value + ', previous item: ' + parsedLatex[i - 1].type)
+          formattedString += '*'
+        }
+      }
       formattedString += item.value
     }
 
     if (item.type === 'operator') {
-      formattedString += item.value
+      if (i === 0 && (item.value === '+' || item.value === '*')) {
+        logger.debug('Structure starting with * or +, ignoring')
+      } else formattedString += item.value
     }
 
     if (item.type === 'variable') {
+      if (i > 1) {
+        if (parsedLatex[i - 1].type !== 'operator') {
+          logger.debug('Adding * before variable: ' + item.value + ', previous item: ' + parsedLatex[i - 1].type)
+          formattedString += '*'
+        }
+      }
       formattedString += item.value
     }
 
