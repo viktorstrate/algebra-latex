@@ -23,7 +23,7 @@ __Supported libraries__
 - [algebrite](http://algebrite.org/)
 - [coffeequate](http://coffeequate.readthedocs.io/)
 
-> NOTE: The above libraries are optional, and has to be installed before use
+> NOTE: The above libraries are optional, and have to be installed before use
 
 *continuing from example above*
 ```javascript
