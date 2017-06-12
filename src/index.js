@@ -119,3 +119,4 @@ class AlgebraLatex {
 }
 
 module.exports = AlgebraLatex
+

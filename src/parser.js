@@ -9,8 +9,10 @@ import logger from './logger'
 const parseLatex = (latex) => {
   let findingToken = false
   let findingNumber = false
+  let findingVariable = false
   let currentToken = ''
   let currentNumber = ''
+  let currentVariable = ''
   let structure = []
 
   for (let i = 0; i < latex.length; i++) {
@@ -31,11 +33,11 @@ const parseLatex = (latex) => {
     if (findingNumber) {
       // Check for number
       if (char.match(/[\d.,]/g)) {
-        logger.debug('Found next number in sequence:' + char)
+        logger.debug('Found next number in sequence: ' + char)
         currentNumber += char
         continue
       } else {
-        logger.debug('Number found' + currentNumber)
+        logger.debug('Number found ' + currentNumber)
         structure.push({
           type: 'number',
           value: currentNumber
@@ -46,11 +48,20 @@ const parseLatex = (latex) => {
       }
     } else {
       if (char.match(/[\d.,]/g)) {
-        logger.debug('Found a new number:' + char)
+        logger.debug('Found a new number: ' + char)
         currentNumber += char
         findingNumber = true
         continue
       }
+    }
+
+    if (findingVariable && !char.match(/[a-zA-Z]/g)) {
+      structure.push({
+        type: 'variable',
+        value: currentVariable
+      })
+      findingVariable = false
+      logger.debug('Found new variable ' + currentVariable)
     }
 
     // Check for group '{ ... }'
@@ -77,7 +88,7 @@ const parseLatex = (latex) => {
 
       // Check for operator
       if (char.match(/[+\-*/()=^_]/g)) {
-        logger.debug('Found operator' + char)
+        logger.debug('Found operator ' + char)
         structure.push({
           type: 'operator',
           value: char
@@ -87,14 +98,17 @@ const parseLatex = (latex) => {
 
       // Check for variable
       if (char.match(/[a-zA-Z]/g)) {
-        logger.debug('Found variable' + char)
-        structure.push({
-          type: 'variable',
-          value: char
-        })
+        if (findingVariable) {
+          currentVariable += char
+          logger.debug('- Finding variable ' + currentVariable)
+        } else {
+          currentVariable = char
+          findingVariable = true
+          logger.debug('Finding new variable ' + currentVariable)
+        }
       }
     }
-  }
+  } // Loop end
 
   if (findingNumber) {
     logger.debug('Wrapping up number')
@@ -109,6 +123,14 @@ const parseLatex = (latex) => {
     structure.push({
       type: 'token',
       value: currentToken
+    })
+  }
+
+  if (findingVariable) {
+    logger.debug('Wrapping up variable')
+    structure.push({
+      type: 'variable',
+      value: currentVariable
     })
   }
 
@@ -168,15 +190,15 @@ const matchingBracketLength = (latex, bracketType) => {
 
     if (char === startBracket) {
       bracketDepth++
-      logger.debug('-- Found starting bracket, depth' + bracketDepth)
+      logger.debug('-- Found starting bracket, depth ' + bracketDepth)
     } else if (char === endBracket) {
       if (bracketDepth === 1) {
-        logger.debug('-- Found original closing bracket at position' + i)
+        logger.debug('-- Found original closing bracket at position ' + i)
         return i
       }
 
       bracketDepth--
-      logger.debug('-- Found closing bracket, depth' + bracketDepth)
+      logger.debug('-- Found closing bracket, depth ' + bracketDepth)
     }
   }
 
@@ -184,3 +206,4 @@ const matchingBracketLength = (latex, bracketType) => {
 }
 
 export default parseLatex
+

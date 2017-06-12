@@ -85,6 +85,36 @@ describe('parser', () => {
     assert.deepEqual(parser(latex), expectedVal)
   })
 
+  describe('Multiple character variables', () => {
+    it('should parse multiple character variables', () => {
+      const latex = 'var*var+a test'
+
+      const expected = [
+        {
+          type: 'variable',
+          value: 'var'
+        }, {
+          type: 'operator',
+          value: '*'
+        }, {
+          type: 'variable',
+          value: 'var'
+        }, {
+          type: 'operator',
+          value: '+'
+        }, {
+          type: 'variable',
+          value: 'a'
+        }, {
+          type: 'variable',
+          value: 'test'
+        }
+      ]
+
+      assert.deepEqual(parser(latex), expected)
+    })
+  })
+
   describe('greek letters', () => {
     it('should parse lower case', () => {
       const latex = '\\alpha\\delta\\gamma'
