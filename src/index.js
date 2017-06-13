@@ -1,5 +1,5 @@
 import parseLatex from './parser'
-import formatLatex from './formatter'
+import mathFormatter from './formatters/format-math.js'
 import logger from './logger'
 import * as greekLetters from './tokens/greek-letters'
 
@@ -54,7 +54,7 @@ class AlgebraLatex {
    */
   toMath () {
     if (this.formattedMath == null) {
-      this.formattedMath = stripParenthesis(formatLatex(this.structure))
+      this.formattedMath = stripParenthesis(mathFormatter(this.structure))
     }
 
     return this.formattedMath

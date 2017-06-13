@@ -1,5 +1,5 @@
-import * as greekLetters from './tokens/greek-letters'
-import logger from './logger'
+import * as greekLetters from '../tokens/greek-letters'
+import logger from '../logger'
 
 /**
  * Will format a parsed latex object, to a calculatable string
@@ -89,3 +89,4 @@ const formatter = (parsedLatex) => {
 }
 
 export default formatter
+
