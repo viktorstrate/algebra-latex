@@ -3,32 +3,6 @@ import mathFormatter from './formatters/format-math.js'
 import logger from './logger'
 import * as greekLetters from './tokens/greek-letters'
 
-// Import optional dependencies
-let algebraJS = null
-let algebrite = null
-let coffeequate = null
-
-try {
-  algebraJS = require('algebra.js')
-  logger.debug('Algebra.js found')
-} catch (e) {
-  logger.debug('Algebra.js not found')
-}
-
-try {
-  algebrite = require('algebrite')
-  logger.debug('Algebrite found')
-} catch (e) {
-  logger.debug('Algebrite not found')
-}
-
-try {
-  coffeequate = require('coffeequate')
-  logger.debug('Coffequate found')
-} catch (e) {
-  logger.debug('Coffequate not found')
-}
-
 // Functors
 const stripParenthesis = mathString => mathString.substr(1, mathString.length - 2)
 
@@ -53,7 +27,7 @@ class AlgebraLatex {
    * @return string The serialized string
    */
   toMath () {
-    if (this.formattedMath == null) {
+    if (typeof this.formattedMath === 'undefined') {
       this.formattedMath = stripParenthesis(mathFormatter(this.structure))
     }
 
@@ -62,11 +36,12 @@ class AlgebraLatex {
 
   /**
    * Will return an algebra.js Expression or Equation
+   * @param {Object} algebraJS an instance of algebra.js
    * @return {(Expression|Equation)} an Expression or Equation
    */
-  toAlgebra () {
-    if (algebraJS == null) {
-      return new Error('Optional module is not installed, install \'algebra.js\' to use this function')
+  toAlgebra (algebraJS) {
+    if (algebraJS === null) {
+      throw (new Error('Algebra.js must be passed as a parameter for toAlgebra'))
     }
 
     let mathToParse = this.toMath()
@@ -77,11 +52,12 @@ class AlgebraLatex {
 
   /**
    * Will return an algebrite object
+   * @param {Object} algebrite an instance of algebrite
    * @return {Object} an algebrite object
    */
-  toAlgebrite () {
-    if (algebrite == null) {
-      return new Error('Optional module is not installed, install \'algebrite\' to use this function')
+  toAlgebrite (algebrite) {
+    if (algebrite === null) {
+      return new Error('Algebrite must be passed as a parameter for toAlgebrite')
     }
 
     if (this.isEquation()) {
@@ -98,9 +74,9 @@ class AlgebraLatex {
    * Will return a coffequate object
    * @return {Object} a coffeequate object
    */
-  toCoffeequate () {
-    if (coffeequate == null) {
-      return new Error('Optional module is not installed, install \'coffeequate\' to use this function')
+  toCoffeequate (coffeequate) {
+    if (coffeequate === null) {
+      return new Error('Coffeequante must be passed as a parameter for toCoffeequante')
     }
 
     let result = this.toMath()

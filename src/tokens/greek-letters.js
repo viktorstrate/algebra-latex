@@ -83,7 +83,7 @@ export function isUpperCase (x) {
 
 export function getSymbol (name) {
   let symbol = letters.find((x) => x.name === name.toLowerCase())
-  if (symbol == null) return null
+  if (typeof symbol === 'undefined') return null
   symbol = symbol.symbol
   if (isUpperCase(name)) symbol = toUpperCase(symbol)
   return symbol
@@ -91,7 +91,7 @@ export function getSymbol (name) {
 
 export function getName (symbol) {
   let name = letters.find((x) => x.symbol === symbol.toLowerCase())
-  if (name == null) return null
+  if (typeof name === 'undefined') return null
   name = name.name
   if (isUpperCase(symbol)) name = toUpperCase(name)
   return name

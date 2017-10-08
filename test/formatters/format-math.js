@@ -1,4 +1,4 @@
-import formatter from '../src/formatters/format-math.js'
+import formatter from '../../src/formatters/format-math.js'
 import assert from 'assert'
 
 describe('formatter', () => {

@@ -1,4 +1,9 @@
 import assert from 'assert'
+
+import algebraJS from 'algebra.js'
+import algebrite from 'algebrite'
+import coffeequate from 'coffeequate'
+
 import AlgebraLatex from '../src/index'
 
 describe('API tests', () => {
@@ -20,8 +25,8 @@ describe('API tests', () => {
   })
 
   describe('algebra.js', () => {
-    const algebraJSEquation = algebraEquation.toAlgebra()
-    const algebraJSExpression = algebraExpression.toAlgebra()
+    const algebraJSEquation = algebraEquation.toAlgebra(algebraJS)
+    const algebraJSExpression = algebraExpression.toAlgebra(algebraJS)
 
     it('should solve equation', () => {
       assert.equal(algebraJSEquation.solveFor('x').toString(), '34/3')
@@ -35,13 +40,13 @@ describe('API tests', () => {
       const latex = '\\alpha + \\alpha - \\Delta'
       const obj = new AlgebraLatex(latex)
 
-      assert.equal(obj.toAlgebra().toTex(), '2\\alpha - \\Delta')
+      assert.equal(obj.toAlgebra(algebraJS).toTex(), '2\\alpha - \\Delta')
     })
   })
 
   describe('algebrite', () => {
-    const algebriteExpression = algebraExpression.toAlgebrite()
-    const algebriteEquation = algebraEquation.toAlgebrite()
+    const algebriteExpression = algebraExpression.toAlgebrite(algebrite)
+    const algebriteEquation = algebraEquation.toAlgebrite(algebrite)
 
     it('should solve expression', () => {
       assert.equal(algebriteExpression.toString(), '1/3 x')
@@ -55,13 +60,13 @@ describe('API tests', () => {
       const latex = '\\alpha + \\alpha - \\Delta'
       const obj = new AlgebraLatex(latex)
 
-      assert.equal(obj.toAlgebrite().toString(), '-Delta + 2 alpha')
+      assert.equal(obj.toAlgebrite(algebrite).toString(), '-Delta + 2 alpha')
     })
   })
 
   describe('coffeequate', () => {
-    const coffeequateEquation = algebraEquation.toCoffeequate()
-    const coffeequateExpression = algebraExpression.toCoffeequate()
+    const coffeequateEquation = algebraEquation.toCoffeequate(coffeequate)
+    const coffeequateExpression = algebraExpression.toCoffeequate(coffeequate)
 
     it('should solve equation', () => {
       assert.equal(coffeequateEquation.toString(), '8 - 10/-3 + x')

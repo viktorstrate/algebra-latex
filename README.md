@@ -29,12 +29,16 @@ __Supported libraries__
 ```javascript
 ...
 
+var algebraJS = require('algebra.js')
+var algebrite = require('algebrite')
+var coffeequate = require('coffeequate')
+
 // For algebra.js
-algebraObj.toAlgebra() // Will either return an algebra.js expression or equation
+algebraObj.toAlgebra(algebraJS) // Will either return an algebra.js expression or equation
 
 // For algebrite
-algebraObject.toAlgebrite()
+algebraObject.toAlgebrite(algebrite)
 
 // For coffequate
-algebraObject.toCoffeequate()
+algebraObject.toCoffeequate(coffeequate)
 ```
