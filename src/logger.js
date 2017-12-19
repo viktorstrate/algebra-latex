@@ -1,6 +1,8 @@
 const debug = (msg) => {
-  if (process.env.TEX_DEBUG) {
-    console.log(msg)
+  if (typeof process === 'object') {
+    if (process.env.TEX_DEBUG) {
+      console.log(msg)
+    }
   }
 }
 

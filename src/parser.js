@@ -206,4 +206,3 @@ const matchingBracketLength = (latex, bracketType) => {
 }
 
 export default parseLatex
-

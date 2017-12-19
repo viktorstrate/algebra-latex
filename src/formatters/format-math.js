@@ -89,4 +89,3 @@ const formatter = (parsedLatex) => {
 }
 
 export default formatter
-

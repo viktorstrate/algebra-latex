@@ -213,4 +213,3 @@ describe('formatter', () => {
     })
   })
 })
-
