@@ -23,6 +23,9 @@ const parseLatex = (latex) => {
         currentToken += char
         continue
       } else {
+        if ((currentToken + char).match(/^\s+$/g)) {
+          currentToken = ' '
+        }
         findingToken = false
         logger.debug('Found token ' + currentToken)
         parseToken(currentToken, structure)

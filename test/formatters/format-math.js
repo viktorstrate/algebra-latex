@@ -56,6 +56,23 @@ describe('formatter', () => {
     assert.equal(formatter(parsedLatex), '((2^(3)+3)/(3))', 'Long latex example')
   })
 
+  it('should format latex with spaces correctly', () => {
+    const parsedLatex = [
+      {
+        type: 'variable',
+        value: 'var'
+      }, {
+        type: 'token',
+        value: ' '
+      }, {
+        type: 'variable',
+        value: 'var'
+      }
+    ]
+
+    assert.equal(formatter(parsedLatex), '(var*var)')
+  })
+
   describe('functions', () => {
     it('should format sqrt function', () => {
       const parsedLatex = [

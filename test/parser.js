@@ -113,6 +113,36 @@ describe('parser', () => {
 
       assert.deepEqual(parser(latex), expected)
     })
+
+    it('should parse variables with spaces in between', () => {
+      const latex = 'a-var \\  var + b'
+      const expected = [
+        {
+          type: 'variable',
+          value: 'a'
+        }, {
+          type: 'operator',
+          value: '-'
+        }, {
+          type: 'variable',
+          value: 'var'
+        }, {
+          type: 'token',
+          value: ' '
+        }, {
+          type: 'variable',
+          value: 'var'
+        }, {
+          type: 'operator',
+          value: '+'
+        }, {
+          type: 'variable',
+          value: 'b'
+        }
+      ]
+
+      assert.deepEqual(parser(latex), expected)
+    })
   })
 
   describe('greek letters', () => {
