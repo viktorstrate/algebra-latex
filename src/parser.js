@@ -1,5 +1,5 @@
 import logger from './logger'
-import functions from './functions.json'
+import functions from './functions'
 
 /**
  * Parse a latex math string, to an object
