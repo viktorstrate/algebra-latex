@@ -77,7 +77,7 @@ describe('formatter', () => {
     it('should format sqrt function', () => {
       const parsedLatex = [
         {
-          type: 'token',
+          type: 'function',
           value: 'sqrt'
         }, {
           type: 'group',
@@ -91,6 +91,54 @@ describe('formatter', () => {
       ]
 
       assert.equal(formatter(parsedLatex), '(sqrt(123))', 'sqrt example')
+    })
+
+    it('should format basic trigonometry functions', () => {
+      const parsedLatex = [{
+        type: 'function',
+        value: 'sin'
+      }, {
+        type: 'operator',
+        value: '('
+      }, {
+        type: 'number',
+        value: '3'
+      }, {
+        type: 'operator',
+        value: '*'
+      }, {
+        type: 'number',
+        value: '4'
+      }, {
+        type: 'operator',
+        value: ')'
+      }, {
+        type: 'operator',
+        value: '-'
+      }, {
+        type: 'function',
+        value: 'cos'
+      }, {
+        type: 'number',
+        value: '5'
+      }, {
+        type: 'variable',
+        value: 'var'
+      }, {
+        type: 'operator',
+        value: '*'
+      }, {
+        type: 'function',
+        value: 'tan'
+      }, {
+        type: 'number',
+        value: '6'
+      }, {
+        type: 'variable',
+        value: 'var'
+      }]
+
+      assert.equal(formatter(parsedLatex), '(sin(3*4)-cos(5)*var*tan(6)*var)')
     })
   })
 
@@ -227,6 +275,22 @@ describe('formatter', () => {
 
       assert.throws(() => { throw formatter(latex1) }, expectedError, 'Example with one parameter following fraction')
       assert.throws(() => { throw formatter(latex2) }, expectedError, 'Example with no parameters following fraction')
+    })
+
+    it('should handle square roots correctly', () => {
+      const latex = [
+        {
+          type: 'function',
+          value: 'sqrt'
+        }, {
+          type: 'number',
+          value: '23'
+        }
+      ]
+
+      const expectedError = /Square root must be followed by/
+
+      assert.throws(() => { throw formatter(latex) }, expectedError)
     })
   })
 })

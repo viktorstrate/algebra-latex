@@ -7,7 +7,7 @@ describe('parser', () => {
 
     const expectedVal = [
       {
-        type: 'token',
+        type: 'function',
         value: 'sqrt'
       }, {
         type: 'group',
@@ -178,6 +178,75 @@ describe('parser', () => {
         }, {
           type: 'token',
           value: 'Gamma'
+        }
+      ]
+
+      assert.deepEqual(parser(latex), expected)
+    })
+  })
+
+  describe('functions', () => {
+    it('should parse basic trigonometry functions', () => {
+      const latex = '\\sin (3*4) - \\cos 5 var * \\tan 6var'
+      const expected = [{
+        type: 'function',
+        value: 'sin'
+      }, {
+        type: 'operator',
+        value: '('
+      }, {
+        type: 'number',
+        value: '3'
+      }, {
+        type: 'operator',
+        value: '*'
+      }, {
+        type: 'number',
+        value: '4'
+      }, {
+        type: 'operator',
+        value: ')'
+      }, {
+        type: 'operator',
+        value: '-'
+      }, {
+        type: 'function',
+        value: 'cos'
+      }, {
+        type: 'number',
+        value: '5'
+      }, {
+        type: 'variable',
+        value: 'var'
+      }, {
+        type: 'operator',
+        value: '*'
+      }, {
+        type: 'function',
+        value: 'tan'
+      }, {
+        type: 'number',
+        value: '6'
+      }, {
+        type: 'variable',
+        value: 'var'
+      }]
+
+      assert.deepEqual(parser(latex), expected)
+    })
+
+    it('should parse modulus', () => {
+      const latex = '3\\mod5'
+      const expected = [
+        {
+          type: 'number',
+          value: '3'
+        }, {
+          type: 'operator',
+          value: '%'
+        }, {
+          type: 'number',
+          value: '5'
         }
       ]
 

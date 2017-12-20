@@ -63,22 +63,33 @@ const formatter = (parsedLatex) => {
         }
       }
 
-      if (item.value === 'sqrt') {
-        if (parsedLatex[i + 1].type === 'group') {
-          logger.debug('Found square root')
-          formattedString += 'sqrt' + formatter(parsedLatex[i + 1].value)
-          i++
-        } else {
-          logger.debug('Square root did not have any following parameters, ignoring')
-        }
-      }
-
       if (item.value === 'cdot' || item.value === 'times' || item.value === 'ast') {
         formattedString += '*'
       }
 
       if (item.value === 'div') {
         formattedString += '/'
+      }
+    }
+
+    if (item.type === 'function') {
+      formattedString += item.value
+
+      const nextItem = parsedLatex[i + 1]
+
+      if (item.value === 'sqrt') {
+        if (parsedLatex[i + 1].type === 'group') {
+          logger.debug('Found square root')
+          formattedString += formatter(parsedLatex[i + 1].value)
+          i++
+        } else {
+          return new Error('Square root must be followed by {}')
+        }
+      } else if (nextItem.type === 'number' || nextItem.type === 'variable') {
+        formattedString += '('
+        formattedString += nextItem.value
+        formattedString += ')'
+        i++
       }
     }
   }

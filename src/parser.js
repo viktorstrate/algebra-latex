@@ -1,4 +1,5 @@
 import logger from './logger'
+import functions from './functions.json'
 
 /**
  * Parse a latex math string, to an object
@@ -141,11 +142,25 @@ const parseLatex = (latex) => {
 }
 
 const parseToken = (token, structure) => {
+  const isFunction = functions.reduce((acc, val) => acc || val === token, false)
+  if (isFunction) {
+    structure.push({
+      type: 'function',
+      value: token
+    })
+    return
+  }
   switch (token) {
     case 'cdot':
       structure.push({
         type: 'operator',
         value: '*'
+      })
+      break
+    case 'mod':
+      structure.push({
+        type: 'operator',
+        value: '%'
       })
       break
     default:
