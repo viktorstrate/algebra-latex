@@ -252,6 +252,56 @@ describe('parser', () => {
 
       assert.deepEqual(parser(latex), expected)
     })
+
+    it('should parse integral', () => {
+      const latex = '\\int x'
+      const expected = [
+        {
+          type: 'function',
+          value: 'integral'
+        },
+        {
+          type: 'variable',
+          value: 'x'
+        }
+      ]
+
+      assert.deepEqual(parser(latex), expected)
+    })
+
+    it('should parse integral 1/x', () => {
+      const latex = '\\int \\frac{1}{x}'
+      const expected = [
+        {
+          type: 'function',
+          value: 'integral'
+        },
+        {
+          type: 'token',
+          value: 'frac'
+        },
+        {
+          type: 'group',
+          value: [
+            {
+              type: 'number',
+              value: '1'
+            }
+          ]
+        },
+        {
+          type: 'group',
+          value: [
+            {
+              type: 'variable',
+              value: 'x'
+            }
+          ]
+        }
+      ]
+
+      assert.deepEqual(parser(latex), expected)
+    })
   })
 
   describe('error handling', () => {

@@ -144,9 +144,13 @@ const parseLatex = (latex) => {
 const parseToken = (token, structure) => {
   const isFunction = functions.reduce((acc, val) => acc || val === token, false)
   if (isFunction) {
+    let tokenValue = token
+    if (token === 'int') {
+      tokenValue = 'integral'
+    }
     structure.push({
       type: 'function',
-      value: token
+      value: tokenValue
     })
     return
   }

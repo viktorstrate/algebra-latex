@@ -140,6 +140,54 @@ describe('formatter', () => {
 
       assert.equal(formatter(parsedLatex), '(sin(3*4)-cos(5)*var*tan(6)*var)')
     })
+
+    it('should format basic integral fucntions', () => {
+      const parsedLatex = [
+        {
+          type: 'function',
+          value: 'integral'
+        },
+        {
+          type: 'variable',
+          value: 'x'
+        }
+      ]
+
+      assert.equal(formatter(parsedLatex), '(integral(x))')
+    })
+
+    it('should format basic integral functions 1/x', () => {
+      const parsedLatex = [
+        {
+          type: 'function',
+          value: 'integral'
+        },
+        {
+          type: 'token',
+          value: 'frac'
+        },
+        {
+          type: 'group',
+          value: [
+            {
+              type: 'number',
+              value: '1'
+            }
+          ]
+        },
+        {
+          type: 'group',
+          value: [
+            {
+              type: 'variable',
+              value: 'x'
+            }
+          ]
+        }
+      ]
+
+      assert.equal(formatter(parsedLatex), '(integral(1)/(x))')
+    })
   })
 
   describe('equations', () => {
