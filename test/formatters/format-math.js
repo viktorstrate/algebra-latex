@@ -131,8 +131,13 @@ describe('formatter', () => {
         type: 'function',
         value: 'tan'
       }, {
-        type: 'number',
-        value: '6'
+        type: 'group',
+        value: [
+          {
+            type: 'number',
+            value: 6
+          }
+        ]
       }, {
         type: 'variable',
         value: 'var'

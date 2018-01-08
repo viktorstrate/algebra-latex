@@ -187,7 +187,7 @@ describe('parser', () => {
 
   describe('functions', () => {
     it('should parse basic trigonometry functions', () => {
-      const latex = '\\sin (3*4) - \\cos 5 var * \\tan 6var'
+      const latex = '\\sin (3*4) - \\cos{5} var * \\tan 6var'
       const expected = [{
         type: 'function',
         value: 'sin'
@@ -213,8 +213,13 @@ describe('parser', () => {
         type: 'function',
         value: 'cos'
       }, {
-        type: 'number',
-        value: '5'
+        type: 'group',
+        value: [
+          {
+            type: 'number',
+            value: 5
+          }
+        ]
       }, {
         type: 'variable',
         value: 'var'
