@@ -7,166 +7,159 @@ describe('latex parser', () => {
     return lexerLatex.parse()
   }
 
+  it('parse simple expression', () => {
+    const latex = '\\frac{1}{2} + \\sqrt{2} \\cdot 4'
+
+    assert.deepEqual(parser(latex), {
+      type: 'operator',
+      operator: 'plus',
+      lhs: {
+        type: 'operator',
+        operator: 'divide',
+        lhs: {
+          type: 'number',
+          value: 1,
+        },
+        rhs: {
+          type: 'number',
+          value: 2,
+        },
+      },
+      rhs: {
+        type: 'operator',
+        operator: 'multiply',
+        lhs: {
+          type: 'function',
+          value: 'sqrt',
+          content: {
+            type: 'number',
+            value: 2,
+          },
+        },
+        rhs: {
+          type: 'number',
+          value: 4,
+        },
+      },
+    })
+  })
+
   it('should parse basic latex example', () => {
     const latex = '\\sqrt{  \\frac{1\\cdot 2   + 3}{\\Delta t} -3 }* 54/399'
 
-    const expectedVal = [
-      {
+    let parsed = parser(latex)
+
+    assert.deepEqual(parsed, {
+      type: 'operator',
+      operator: 'multiply',
+      lhs: {
         type: 'function',
         value: 'sqrt',
-      },
-      {
-        type: 'group',
-        value: [
-          {
-            type: 'token',
-            value: 'frac',
-          },
-          {
-            type: 'group',
-            value: [
-              {
-                type: 'number',
-                value: '1',
-              },
-              {
+        content: {
+          type: 'operator',
+          operator: 'minus',
+          lhs: {
+            type: 'operator',
+            operator: 'divide',
+            lhs: {
+              type: 'operator',
+              operator: 'plus',
+              lhs: {
                 type: 'operator',
-                value: '*',
+                operator: 'multiply',
+                lhs: {
+                  type: 'number',
+                  value: 1,
+                },
+                rhs: {
+                  type: 'number',
+                  value: 2,
+                },
               },
-              {
+              rhs: {
                 type: 'number',
-                value: '2',
+                value: 3,
               },
-              {
-                type: 'operator',
-                value: '+',
-              },
-              {
-                type: 'number',
-                value: '3',
-              },
-            ],
-          },
-          {
-            type: 'group',
-            value: [
-              {
-                type: 'token',
+            },
+            rhs: {
+              type: 'operator',
+              operator: 'multiply',
+              lhs: {
+                type: 'symbol',
                 value: 'Delta',
               },
-              {
+              rhs: {
                 type: 'variable',
                 value: 't',
               },
-            ],
+            },
           },
-          {
-            type: 'operator',
-            value: '-',
-          },
-          {
+          rhs: {
             type: 'number',
-            value: '3',
+            value: 3,
           },
-        ],
+        },
       },
-      {
+      rhs: {
         type: 'operator',
-        value: '*',
+        operator: 'divide',
+        lhs: {
+          type: 'number',
+          value: 54,
+        },
+        rhs: {
+          type: 'number',
+          value: 399,
+        },
       },
-      {
-        type: 'number',
-        value: '54',
-      },
-      {
-        type: 'operator',
-        value: '/',
-      },
-      {
-        type: 'number',
-        value: '399',
-      },
-    ]
-
-    let parsed = parser(latex)
-
-    console.log(JSON.stringify(parsed))
-
-    assert.deepEqual(parsed, [])
+    })
   })
 
-  /*describe('Multiple character variables', () => {
-    it('should parse multiple character variables', () => {
-      const latex = 'var*var+a test'
+  describe('multiple character variables', () => {
+    it('parse multiple character variables', () => {
+      const latex = 'var+a var'
 
-      const expected = [
-        {
+      assert.deepEqual(parser(latex), {
+        type: 'operator',
+        operator: 'plus',
+        lhs: {
           type: 'variable',
           value: 'var',
         },
-        {
+        rhs: {
           type: 'operator',
-          value: '*',
+          operator: 'multiply',
+          lhs: {
+            type: 'variable',
+            value: 'a',
+          },
+          rhs: {
+            type: 'variable',
+            value: 'var',
+          },
         },
-        {
-          type: 'variable',
-          value: 'var',
-        },
-        {
-          type: 'operator',
-          value: '+',
-        },
-        {
-          type: 'variable',
-          value: 'a',
-        },
-        {
-          type: 'variable',
-          value: 'test',
-        },
-      ]
-
-      assert.deepEqual(parser(latex), expected)
+      })
     })
 
-    it('should parse variables with spaces in between', () => {
-      const latex = 'a-var \\  var + b'
-      const expected = [
-        {
+    it('parse variables with spaces in between', () => {
+      const latex = 'a \\ \\qquad b'
+
+      assert.deepEqual(parser(latex), {
+        type: 'operator',
+        operator: 'multiply',
+        lhs: {
           type: 'variable',
           value: 'a',
         },
-        {
-          type: 'operator',
-          value: '-',
-        },
-        {
-          type: 'variable',
-          value: 'var',
-        },
-        {
-          type: 'token',
-          value: ' ',
-        },
-        {
-          type: 'variable',
-          value: 'var',
-        },
-        {
-          type: 'operator',
-          value: '+',
-        },
-        {
+        rhs: {
           type: 'variable',
           value: 'b',
         },
-      ]
-
-      assert.deepEqual(parser(latex), expected)
+      })
     })
   })
 
-  describe('greek letters', () => {
+  /*describe('greek letters', () => {
     it('should parse lower case', () => {
       const latex = '\\alpha\\delta\\gamma'
 

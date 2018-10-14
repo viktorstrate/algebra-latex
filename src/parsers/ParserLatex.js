@@ -1,182 +1,298 @@
 import LexerLatex from '../lexers/LexerLatex'
+import functions from '../models/functions'
+import greekLetters from '../models/greek-letters'
+import { debug } from '../logger'
 
 export default class ParserLatex {
   constructor(latex) {
     this.lexer = new LexerLatex(latex)
     this.ast = null
+    this.current_token = null
+    this.peek_token = null
   }
 
   parse() {
-    this.ast = this.root()
+    debug('\nLatex parser .parse()')
+    this.ast = this.expr()
     return this.ast
   }
 
-  root() {
-    console.log('root')
-    let result = []
+  next_token() {
+    if (this.peek_token != null) {
+      this.current_token = this.peek_token
+      this.peek_token = null
+      debug('next token from peek', this.current_token)
+    } else {
+      this.current_token = this.lexer.next_token()
+      debug('next token', this.current_token)
+    }
+    return this.current_token
+  }
 
-    while (this.pos <= this.text.length) {
-      let expr = this.expr()
-
-      if (expr == null) {
-        return result
-      } else {
-        result.push(expr)
-      }
+  peek() {
+    if (this.peek_token == null) {
+      this.peek_token = this.lexer.next_token()
     }
 
-    return result
+    debug('next token from peek', this.peek_token)
+    return this.peek_token
+  }
+
+  eat(token_type) {
+    if (this.next_token().type != token_type) {
+      throw Error(
+        `Expected ${token_type} found ${JSON.stringify(this.current_token)}`
+      )
+    }
   }
 
   expr() {
-    console.log('expr')
-    if (this.current_char() == '\\') {
-      return this.keyword()
-    }
+    // expr : operator
+    //      | group
+    //      | EOF
 
-    if (this.current_char().match(/[\+\-0-9]/)) {
+    debug('expr')
+
+    this.peek()
+
+    if (
+      this.peek_token.type == 'number' ||
+      this.peek_token.type == 'operator' ||
+      this.peek_token.type == 'variable' ||
+      this.peek_token.type == 'function' ||
+      this.peek_token.type == 'keyword'
+    ) {
       return this.operator()
     }
 
-    if (this.current_char() == '{') {
+    if (this.peek_token.type == 'lbracket') {
       return this.group()
     }
 
-    if (this.current_char() == ' ') {
-      this.pos += 1
-      return this.expr()
+    if (this.peek_token.type == 'rbracket') {
+      return null
     }
 
-    return null
+    if (this.peek_token.type == 'EOF') {
+      this.next_token()
+      return null
+    }
+
+    this.next_token()
+    throw Error(`Unexpected token: ${JSON.stringify(this.current_token)}`)
   }
 
   keyword() {
-    console.log('keyword')
-    this.eat('\\')
+    // keyword : KEYWORD
+    //         | fraction
+    //         | function
+    //         | symbol
 
-    let token = ''
-    while (
-      this.current_char().match(/[a-zA-Z]/) &&
-      this.pos <= this.text.length
-    ) {
-      token += this.current_char()
-      this.pos += 1
+    debug('keyword')
+
+    if (this.peek().type != 'keyword') {
+      throw Error('Expected keyword found ' + JSON.stringify(this.peek_token))
     }
 
-    token = token.toLocaleLowerCase()
-    console.log('keyword - token:', token)
+    let kwd = this.peek_token.value
+    kwd = kwd.toLowerCase()
 
-    if (token == 'frac') {
+    debug('keyword -', kwd)
+
+    if (kwd == 'frac') {
       return this.fraction()
     }
 
-    if (functions.includes(token)) {
-      return this.function(token)
+    if (greekLetters.map(val => val.name).includes(kwd)) {
+      return this.symbol(this.current_token.value)
     }
 
-    if (greekLetters.map(val => val.name).includes(token)) {
-      return this.symbol(token)
+    if (functions.includes(kwd.toLowerCase())) {
+      return this.function()
     }
 
-    return null
+    this.eat('keyword')
+    return {
+      type: 'keyword',
+      value: this.current_token.value,
+    }
   }
 
   fraction() {
-    console.log('fraction')
+    // fraction : FRAC group group
+
+    debug('fraction')
+
+    this.eat('keyword')
+
+    if (this.current_token.value != 'frac') {
+      throw Error(
+        'Expected fraction found ' + JSON.stringify(this.current_token)
+      )
+    }
+
     let nominator = this.group()
     let denominator = this.group()
 
     return {
-      type: 'fraction',
-      nominator,
-      denominator,
+      type: 'operator',
+      operator: 'divide',
+      lhs: nominator,
+      rhs: denominator,
     }
   }
 
-  function(token) {
-    console.log('function')
+  function() {
+    // function : FUNCTION group
+
+    debug('function')
+
+    this.eat('keyword')
+    let value = this.current_token.value
+
     let content = this.group()
 
     return {
       type: 'function',
-      token,
+      value,
       content,
     }
   }
 
-  symbol(token) {
-    console.log('symbol')
+  symbol() {
+    // symbol : SYMBOL
+
+    this.eat('keyword')
+
+    debug('symbol')
     return {
       type: 'symbol',
-      token,
+      value: this.current_token.value,
     }
   }
 
   group() {
-    console.log('group')
-    this.eat('{')
-    let content = this.root()
-    this.eat('}')
+    // group : LBRACKET expr RBRACKET
 
-    return {
-      type: 'group',
-      content,
-    }
+    debug('start group')
+    this.eat('lbracket')
+    let content = this.expr()
+    this.eat('rbracket')
+    debug('end group')
+
+    return content
   }
 
   operator() {
-    console.log('operator')
-    let result = [this.number()]
+    // operator : term ((PLUS | MINUS) operator)?
+    debug('operator left')
+    let lhs = this.term()
+    let op = this.peek()
 
-    while (this.current_char().match(/\+\-\*\//)) {
-      this.pos += 1
-      result.push(this.number())
+    if (op.type != 'operator' || (op.value != 'plus' && op.value != 'minus')) {
+      debug('operator only left side')
+      return lhs
     }
 
-    return result
+    // Operator token
+    this.next_token()
+
+    debug('operator right')
+    let rhs = this.operator()
+
+    return {
+      type: 'operator',
+      lhs,
+      operator: op.value,
+      rhs,
+    }
   }
 
-  number_token() {
-    console.log('number token')
-    let num = ''
-    let separator = false
+  term() {
+    // term : number ( ((MULTIPLY | DIVIDE) term) | variable )?
 
-    while (this.current_char().match(/[0-9\.]/)) {
-      if (this.current_char() == '.') {
-        if (separator) {
-          break
-        } else {
-          separator = true
-        }
+    debug('term left')
+
+    let lhs = this.number()
+    let op = this.peek()
+
+    if (op.type == 'variable') {
+      op = {
+        type: 'operator',
+        value: 'multiply',
       }
-
-      num += this.current_char()
-      this.pos += 1
+    } else if (
+      op.type != 'operator' ||
+      (op.value != 'multiply' && op.value != 'divide')
+    ) {
+      debug('term only left side')
+      return lhs
+    } else {
+      // Operator token
+      this.next_token()
     }
 
-    let result = Number(num)
-    if (isNaN(result)) {
-      throw Error(`Could not parse number: '${num}'`)
-    }
+    debug('term right')
 
-    return result
+    let rhs = this.term()
+
+    return {
+      type: 'operator',
+      lhs,
+      operator: op.value,
+      rhs,
+    }
   }
 
   number() {
-    console.log('number')
-    if (this.current_char() == '+' || this.current_char() == '-') {
-      let prefix = this.current_char()
-      this.pos += 1
+    // number : NUMBER
+    //        | UNI_OP
+    //        | variable
+    //        | keyword
+
+    debug('number')
+
+    this.peek()
+
+    if (this.peek_token.type == 'number') {
+      this.next_token()
       return {
-        type: 'uni-operator',
-        prefix,
-        content: this.number(),
-      }
-    } else {
-      return {
-        type: 'number',
-        value: this.number_token(),
+        type: this.current_token.type,
+        value: this.current_token.value,
       }
     }
+
+    if (this.peek_token.type == 'operator') {
+      this.next_token()
+      if (
+        this.current_token.value == 'plus' ||
+        this.current_token.value == 'minus'
+      ) {
+        let prefix = this.current_token.value
+        return {
+          type: 'uni-operator',
+          prefix,
+          content: this.number(),
+        }
+      }
+    }
+
+    if (this.peek_token.type == 'variable') {
+      this.next_token()
+      return {
+        type: 'variable',
+        value: this.current_token.value,
+      }
+    }
+
+    if (this.peek_token.type == 'keyword') {
+      return this.keyword()
+    }
+
+    this.next_token()
+    throw Error(
+      'Expected number, variable, function or + - found ' +
+        JSON.stringify(this.current_token)
+    )
   }
 }

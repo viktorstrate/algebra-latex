@@ -8,7 +8,7 @@ describe('latex lexer', () => {
     let result = []
 
     let token = lexer.next_token()
-    while (token !== 'EOF') {
+    while (token.type !== 'EOF') {
       result.push(token)
       token = lexer.next_token()
     }
@@ -16,7 +16,7 @@ describe('latex lexer', () => {
     return result
   }
 
-  it('parse simple latex example', () => {
+  it('parse simple latex expression', () => {
     const latex = '\\sqrt{  \\frac{1\\cdot 2   + 3}{\\Delta t} -3 }* 54/399'
 
     const expected = [
@@ -39,8 +39,8 @@ describe('latex lexer', () => {
         value: 1,
       },
       {
-        type: 'keyword',
-        value: 'cdot',
+        type: 'operator',
+        value: 'multiply',
       },
       {
         type: 'number',

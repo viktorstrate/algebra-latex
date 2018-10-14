@@ -1,4 +1,4 @@
-import logger from '../logger'
+import { debug } from '../logger'
 
 export const letters = [
   {
@@ -120,12 +120,12 @@ export function getName(symbol) {
 }
 
 export function convertSymbols(math) {
-  logger.debug('Converting math symbols ' + math)
+  debug('Converting math symbols ' + math)
   letters.forEach(letter => {
     math = math.split(letter.symbol).join(letter.name)
     math = math.split(toUpperCase(letter.symbol)).join(toUpperCase(letter.name))
   })
-  logger.debug('- Converted math symbols ' + math)
+  debug('Converted math symbols ' + math)
   return math
 }
 
