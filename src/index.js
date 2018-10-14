@@ -1,10 +1,11 @@
-import parseLatex from './parser'
+import LexerLatex from './lexers/LexerLatex'
 import mathFormatter from './formatters/format-math.js'
 import logger from './logger'
-import * as greekLetters from './tokens/greek-letters'
+import * as greekLetters from './models/greek-letters'
 
 // Functors
-const stripParenthesis = mathString => mathString.substr(1, mathString.length - 2)
+const stripParenthesis = mathString =>
+  mathString.substr(1, mathString.length - 2)
 
 /**
  * A class for parsing latex math
@@ -15,20 +16,24 @@ class AlgebraLatex {
    * @param  {String} latex The latex to parse
    * @return {AlgebraLatex} object to be converted
    */
-  constructor (latex) {
+  constructor(latex) {
     logger.debug('Creating AlgebraLatex object with input: ' + latex)
     this.texInput = latex
+    this.lexer = new LexerLatex(latex)
+    this.lexer.parse()
+  }
 
-    this.structure = parseLatex(latex)
+  getAst() {
+    return this.lexer.ast
   }
 
   /**
    * Will return a serialized string eg. 2*(3+4)/(sqrt(5))-8
    * @return string The serialized string
    */
-  toMath () {
+  toMath() {
     if (typeof this.formattedMath === 'undefined') {
-      this.formattedMath = stripParenthesis(mathFormatter(this.structure))
+      this.formattedMath = stripParenthesis(mathFormatter(this.getAst()))
     }
 
     return this.formattedMath
@@ -39,9 +44,9 @@ class AlgebraLatex {
    * @param {Object} algebraJS an instance of algebra.js
    * @return {(Expression|Equation)} an Expression or Equation
    */
-  toAlgebra (algebraJS) {
+  toAlgebra(algebraJS) {
     if (algebraJS === null) {
-      throw (new Error('Algebra.js must be passed as a parameter for toAlgebra'))
+      throw new Error('Algebra.js must be passed as a parameter for toAlgebra')
     }
 
     let mathToParse = this.toMath()
@@ -55,9 +60,11 @@ class AlgebraLatex {
    * @param {Object} algebrite an instance of algebrite
    * @return {Object} an algebrite object
    */
-  toAlgebrite (algebrite) {
+  toAlgebrite(algebrite) {
     if (algebrite === null) {
-      return new Error('Algebrite must be passed as a parameter for toAlgebrite')
+      return new Error(
+        'Algebrite must be passed as a parameter for toAlgebrite'
+      )
     }
 
     if (this.isEquation()) {
@@ -74,9 +81,11 @@ class AlgebraLatex {
    * Will return a coffequate object
    * @return {Object} a coffeequate object
    */
-  toCoffeequate (coffeequate) {
+  toCoffeequate(coffeequate) {
     if (coffeequate === null) {
-      return new Error('Coffeequante must be passed as a parameter for toCoffeequante')
+      return new Error(
+        'Coffeequante must be passed as a parameter for toCoffeequante'
+      )
     }
 
     let result = this.toMath()
@@ -89,7 +98,7 @@ class AlgebraLatex {
    * Wether or not the object is an equation or an expression
    * @return Boolean true if expression
    */
-  isEquation () {
+  isEquation() {
     return this.texInput.includes('=')
   }
 }

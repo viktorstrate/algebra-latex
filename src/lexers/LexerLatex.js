@@ -1,13 +1,135 @@
-import logger from './logger'
-import functions from './functions'
+import logger from '../logger'
+import functions from '../models/functions'
 
-/**
- * Parse a latex math string, to an object
- * @param  {string} latex A latex string like "\frac{1}{2}"
- * @return {array} An array containing the content of the input,
- *                     formatted with objects with a type and a value field
- */
-const parseLatex = (latex) => {
+export default class LatexLexer {
+  constructor(latex) {
+    this.text = latex
+    this.pos = 0
+    this.ast = []
+
+    this.current_char = () => this.text.charAt(this.pos)
+    this.eat = char => {
+      if (this.current_char() == char) {
+        this.pos += 1
+      } else {
+        throw Error(`Found ${this.current_char()} expected ${char}`)
+      }
+    }
+  }
+
+  next_token() {
+    if (this.pos >= this.text.length) {
+      return 'EOF'
+    }
+
+    if (this.current_char() == ' ' || this.current_char() == '\n') {
+      this.pos += 1
+      return this.next_token()
+    }
+
+    if (this.current_char() == '\\') {
+      return this.keyword()
+    }
+
+    if (this.current_char().match(/[0-9]/)) {
+      return this.number()
+    }
+
+    if (this.current_char().match(/[a-zA-Z]/)) {
+      return this.variable()
+    }
+
+    if (this.current_char() == '{') {
+      this.pos += 1
+      return { type: 'lbracket' }
+    }
+
+    if (this.current_char() == '}') {
+      this.pos += 1
+      return { type: 'rbracket' }
+    }
+
+    if (this.current_char() == '+') {
+      this.pos += 1
+      return { type: 'operator', value: 'plus' }
+    }
+
+    if (this.current_char() == '-') {
+      this.pos += 1
+      return { type: 'operator', value: 'minus' }
+    }
+
+    if (this.current_char() == '*') {
+      this.pos += 1
+      return { type: 'operator', value: 'multiply' }
+    }
+
+    if (this.current_char() == '/') {
+      this.pos += 1
+      return { type: 'operator', value: 'divide' }
+    }
+
+    this.pos += 1
+    return 'Unknown symbol: ' + this.current_char()
+  }
+
+  keyword() {
+    this.eat('\\')
+
+    return {
+      type: 'keyword',
+      value: this.variable().value,
+    }
+  }
+
+  number() {
+    let num = ''
+    let separator = false
+
+    while (this.current_char().match(/[0-9\.]/)) {
+      if (this.current_char() == '.') {
+        if (separator) {
+          break
+        } else {
+          separator = true
+        }
+      }
+
+      num += this.current_char()
+      this.pos += 1
+    }
+
+    let result = Number(num)
+    if (isNaN(result)) {
+      throw Error(`Could not parse number: '${num}'`)
+    }
+
+    return {
+      type: 'number',
+      value: result,
+    }
+  }
+
+  variable() {
+    let token = ''
+    while (
+      this.current_char().match(/[a-zA-Z]/) &&
+      this.pos <= this.text.length
+    ) {
+      token += this.current_char()
+      this.pos += 1
+    }
+
+    return {
+      type: 'variable',
+      value: token,
+    }
+  }
+}
+
+function parseLatex(latex) {}
+
+const parseLatexOld = latex => {
   let findingToken = false
   let findingNumber = false
   let findingVariable = false
@@ -44,7 +166,7 @@ const parseLatex = (latex) => {
         logger.debug('Number found ' + currentNumber)
         structure.push({
           type: 'number',
-          value: currentNumber
+          value: currentNumber,
         })
 
         currentNumber = ''
@@ -62,7 +184,7 @@ const parseLatex = (latex) => {
     if (findingVariable && !char.match(/[a-zA-Z]/g)) {
       structure.push({
         type: 'variable',
-        value: currentVariable
+        value: currentVariable,
       })
       findingVariable = false
       logger.debug('Found new variable ' + currentVariable)
@@ -83,7 +205,7 @@ const parseLatex = (latex) => {
 
         structure.push({
           type: 'group',
-          value: parseLatex(newLatex)
+          value: parseLatex(newLatex),
         })
 
         i += length
@@ -95,7 +217,7 @@ const parseLatex = (latex) => {
         logger.debug('Found operator ' + char)
         structure.push({
           type: 'operator',
-          value: char
+          value: char,
         })
         continue
       }
@@ -118,7 +240,7 @@ const parseLatex = (latex) => {
     logger.debug('Wrapping up number')
     structure.push({
       type: 'number',
-      value: currentNumber
+      value: currentNumber,
     })
   }
 
@@ -126,7 +248,7 @@ const parseLatex = (latex) => {
     logger.debug('Wrapping up token')
     structure.push({
       type: 'token',
-      value: currentToken
+      value: currentToken,
     })
   }
 
@@ -134,7 +256,7 @@ const parseLatex = (latex) => {
     logger.debug('Wrapping up variable')
     structure.push({
       type: 'variable',
-      value: currentVariable
+      value: currentVariable,
     })
   }
 
@@ -146,7 +268,7 @@ const parseToken = (token, structure) => {
   if (isFunction) {
     structure.push({
       type: 'function',
-      value: token
+      value: token,
     })
     return
   }
@@ -154,19 +276,19 @@ const parseToken = (token, structure) => {
     case 'cdot':
       structure.push({
         type: 'operator',
-        value: '*'
+        value: '*',
       })
       break
     case 'mod':
       structure.push({
         type: 'operator',
-        value: '%'
+        value: '%',
       })
       break
     default:
       structure.push({
         type: 'token',
-        value: token
+        value: token,
       })
   }
 }
@@ -180,7 +302,7 @@ const parseToken = (token, structure) => {
  *                                  to the location of the matching bracket
  */
 const matchingBracketLength = (latex, bracketType) => {
-  logger.debug('Finding matching bracket for text:', latex)
+  logger.debug('Finding matching bracket for text: ' + latex)
 
   let startBracket = ''
   let endBracket = ''
@@ -222,5 +344,3 @@ const matchingBracketLength = (latex, bracketType) => {
 
   return new Error('Brackets do not match up')
 }
-
-export default parseLatex

@@ -1,4 +1,4 @@
-import * as greekLetters from '../tokens/greek-letters'
+import * as greekLetters from '../models/greek-letters'
 import logger from '../logger'
 
 /**
@@ -6,7 +6,7 @@ import logger from '../logger'
  * @param  {object} parsedLatex An object parsed by "./parser.js"
  * @return {string} A calculatable string, eg. "(1+3)/4*sqrt(2)"
  */
-const formatter = (parsedLatex) => {
+const formatter = parsedLatex => {
   let formattedString = ''
 
   formattedString += '('
@@ -16,8 +16,16 @@ const formatter = (parsedLatex) => {
 
     if (item.type === 'number') {
       if (i > 0) {
-        if (parsedLatex[i - 1].type !== 'number' && parsedLatex[i - 1].type !== 'operator') {
-          logger.debug('Adding * before number: ' + item.value + ', previous item: ' + parsedLatex[i - 1].type)
+        if (
+          parsedLatex[i - 1].type !== 'number' &&
+          parsedLatex[i - 1].type !== 'operator'
+        ) {
+          logger.debug(
+            'Adding * before number: ' +
+              item.value +
+              ', previous item: ' +
+              parsedLatex[i - 1].type
+          )
           formattedString += '*'
         }
       }
@@ -33,7 +41,12 @@ const formatter = (parsedLatex) => {
     if (item.type === 'variable') {
       if (i > 0) {
         if (parsedLatex[i - 1].type !== 'operator') {
-          logger.debug('Adding * before variable: ' + item.value + ', previous item: ' + parsedLatex[i - 1].type)
+          logger.debug(
+            'Adding * before variable: ' +
+              item.value +
+              ', previous item: ' +
+              parsedLatex[i - 1].type
+          )
           formattedString += '*'
         }
       }
@@ -54,16 +67,26 @@ const formatter = (parsedLatex) => {
       }
 
       if (item.value === 'frac') {
-        if (parsedLatex[i + 1].type === 'group' && parsedLatex[i + 2].type === 'group') {
+        if (
+          parsedLatex[i + 1].type === 'group' &&
+          parsedLatex[i + 2].type === 'group'
+        ) {
           logger.debug('Found fraction')
-          formattedString += formatter(parsedLatex[i + 1].value) + '/' + formatter(parsedLatex[i + 2].value)
+          formattedString +=
+            formatter(parsedLatex[i + 1].value) +
+            '/' +
+            formatter(parsedLatex[i + 2].value)
           i += 2
         } else {
           return new Error('Fraction must have 2 following parameters')
         }
       }
 
-      if (item.value === 'cdot' || item.value === 'times' || item.value === 'ast') {
+      if (
+        item.value === 'cdot' ||
+        item.value === 'times' ||
+        item.value === 'ast'
+      ) {
         formattedString += '*'
       }
 

@@ -1,0 +1,20 @@
+
+root : (expr)*
+
+expr : keyword
+     | operator
+     | group
+
+group : LBRACKET expr (expr)* RBRACKET
+
+operator : number (OPERATOR number)*
+
+number : (PLUS | MINUS) number | NUMBER
+
+keyword : BACK_SLASH (fraction | function | symbol)
+
+fraction : FRAC group group
+
+function : ( SIN | COS | TAN | ARCTAN | LOG | LN | SQRT | MAX | MIN ) group
+
+symbol : ( ALPHA | BETA | GAMMA | DELTA ... )

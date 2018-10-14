@@ -1,7 +1,7 @@
 import formatter from '../../src/formatters/format-math.js'
 import assert from 'assert'
 
-describe('formatter', () => {
+/*describe('formatter', () => {
   it('should format a general latex example', () => {
     const parsedLatex = [
       {
@@ -298,4 +298,4 @@ describe('formatter', () => {
       assert.throws(() => { throw formatter(latex) }, expectedError)
     })
   })
-})
+})*/

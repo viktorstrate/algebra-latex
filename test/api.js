@@ -6,7 +6,7 @@ import coffeequate from 'coffeequate'
 
 import AlgebraLatex from '../src/index'
 
-describe('API tests', () => {
+/*describe('API tests', () => {
   const latexEquation = 'x+\\frac{2}{3}-4=8'
   const algebraEquation = new AlgebraLatex(latexEquation)
 
@@ -53,7 +53,9 @@ describe('API tests', () => {
     })
 
     it('should fail to parse equation', () => {
-      assert.throws(() => { throw algebriteEquation }, /Algebrite can not handle equations, only expressions/)
+      assert.throws(() => {
+        throw algebriteEquation
+      }, /Algebrite can not handle equations, only expressions/)
     })
 
     it('should parse greek letters correctly', () => {
@@ -76,4 +78,4 @@ describe('API tests', () => {
       assert.equal(coffeequateExpression.toString(), 'x/3')
     })
   })
-})
+})*/
