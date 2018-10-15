@@ -1,5 +1,6 @@
 import logger from '../logger'
 import functions from '../models/functions'
+import greekLetters from '../models/greek-letters'
 
 export default class LatexLexer {
   constructor(latex) {
@@ -7,19 +8,46 @@ export default class LatexLexer {
     this.pos = 0
     this.ast = []
 
+    this.col = 0
+    this.line = 0
+
     this.current_char = () => this.text.charAt(this.pos)
     this.eat = char => {
       if (this.current_char() == char) {
         this.pos += 1
       } else {
-        throw Error(`Found ${this.current_char()} expected ${char}`)
+        this.error(`Expected ${char} found ${this.current_char()}`)
       }
     }
+  }
+
+  increment(amount = 1) {
+    this.pos += amount
+    this.col += amount
+  }
+
+  error(message) {
+    let line = this.text.split('\n')[this.line]
+    let spacing = ''
+
+    for (let i = 0; i < this.col; i++) {
+      spacing += ' '
+    }
+
+    throw Error(
+      `Lexer error\n${line}\n${spacing}^\nError at line: ${this.lexer.line +
+        1} col: ${this.lexer.col + 1}\n${message}`
+    )
   }
 
   next_token() {
     if (this.pos >= this.text.length) {
       return { type: 'EOF' }
+    }
+
+    if (this.current_char() == '\n') {
+      this.col = 0
+      this.line++
     }
 
     const blank_chars = [
@@ -37,7 +65,7 @@ export default class LatexLexer {
 
     for (let blank of blank_chars) {
       if (this.text.startsWith(blank, this.pos)) {
-        this.pos += blank.length
+        this.increment(blank.length)
         return this.next_token()
       }
     }
@@ -55,37 +83,46 @@ export default class LatexLexer {
     }
 
     if (this.current_char() == '{') {
-      this.pos += 1
-      return { type: 'lbracket' }
+      this.increment()
+      return { type: 'bracket', open: true, value: '{' }
     }
 
     if (this.current_char() == '}') {
-      this.pos += 1
-      return { type: 'rbracket' }
+      this.increment()
+      return { type: 'bracket', open: false, value: '}' }
+    }
+
+    if (this.current_char() == '(') {
+      this.increment()
+      return { type: 'bracket', open: true, value: '(' }
+    }
+
+    if (this.current_char() == ')') {
+      this.increment()
+      return { type: 'bracket', open: false, value: ')' }
     }
 
     if (this.current_char() == '+') {
-      this.pos += 1
+      this.increment()
       return { type: 'operator', value: 'plus' }
     }
 
     if (this.current_char() == '-') {
-      this.pos += 1
+      this.increment()
       return { type: 'operator', value: 'minus' }
     }
 
     if (this.current_char() == '*') {
-      this.pos += 1
+      this.increment()
       return { type: 'operator', value: 'multiply' }
     }
 
     if (this.current_char() == '/') {
-      this.pos += 1
+      this.increment()
       return { type: 'operator', value: 'divide' }
     }
 
-    this.pos += 1
-    throw Error('Unknown symbol: ' + this.current_char())
+    this.error('Unknown symbol: ' + this.current_char())
   }
 
   keyword() {
@@ -95,6 +132,34 @@ export default class LatexLexer {
 
     if (variable.value == 'cdot') {
       return { type: 'operator', value: 'multiply' }
+    }
+
+    if (variable.value == 'mod') {
+      return { type: 'operator', value: 'modulus' }
+    }
+
+    if (variable.value == 'left') {
+      let bracket = this.next_token()
+
+      if (bracket.type != 'bracket' && bracket.open != true) {
+        this.error('Expected opening bracket found ' + bracket)
+      }
+
+      return bracket
+    }
+
+    if (variable.value == 'right') {
+      let bracket = this.next_token()
+
+      if (bracket.type != 'bracket' && bracket.open != false) {
+        this.error('Expected closing bracket found ' + bracket)
+      }
+
+      return bracket
+    }
+
+    if (greekLetters.map(x => x.name).includes(variable.value.toLowerCase())) {
+      return { type: 'variable', value: variable.value }
     }
 
     return {
@@ -117,12 +182,12 @@ export default class LatexLexer {
       }
 
       num += this.current_char()
-      this.pos += 1
+      this.increment()
     }
 
     let result = Number(num)
     if (isNaN(result)) {
-      throw Error(`Could not parse number: '${num}'`)
+      this.error(`Could not parse number: '${num}'`)
     }
 
     return {
@@ -138,7 +203,7 @@ export default class LatexLexer {
       this.pos <= this.text.length
     ) {
       token += this.current_char()
-      this.pos += 1
+      this.increment()
     }
 
     return {

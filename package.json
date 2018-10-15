@@ -5,7 +5,7 @@
     "build": "babel src -d lib",
     "start": "node .",
     "prettify": "prettier **/*.js --write",
-    "test": "npm run mocha && npm run lint",
+    "test": "npm run mocha",
     "test:watch": "mocha --require babel-core/register --recursive --watch",
     "mocha": "mocha --require babel-core/register --recursive",
     "prepublish": "npm run build"

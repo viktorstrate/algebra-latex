@@ -25,14 +25,18 @@ describe('latex lexer', () => {
         value: 'sqrt',
       },
       {
-        type: 'lbracket',
+        type: 'bracket',
+        open: true,
+        value: '{',
       },
       {
         type: 'keyword',
         value: 'frac',
       },
       {
-        type: 'lbracket',
+        type: 'bracket',
+        open: true,
+        value: '{',
       },
       {
         type: 'number',
@@ -55,13 +59,17 @@ describe('latex lexer', () => {
         value: 3,
       },
       {
-        type: 'rbracket',
+        type: 'bracket',
+        open: false,
+        value: '}',
       },
       {
-        type: 'lbracket',
+        type: 'bracket',
+        open: true,
+        value: '{',
       },
       {
-        type: 'keyword',
+        type: 'variable',
         value: 'Delta',
       },
       {
@@ -69,7 +77,9 @@ describe('latex lexer', () => {
         value: 't',
       },
       {
-        type: 'rbracket',
+        type: 'bracket',
+        open: false,
+        value: '}',
       },
       {
         type: 'operator',
@@ -80,7 +90,9 @@ describe('latex lexer', () => {
         value: 3,
       },
       {
-        type: 'rbracket',
+        type: 'bracket',
+        open: false,
+        value: '}',
       },
       {
         type: 'operator',

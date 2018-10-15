@@ -14,6 +14,9 @@ export default class ParserLatex {
   parse() {
     debug('\nLatex parser .parse()')
     this.ast = this.expr()
+
+    this.eat('EOF')
+
     return this.ast
   }
 
@@ -38,9 +41,23 @@ export default class ParserLatex {
     return this.peek_token
   }
 
+  error(message) {
+    let line = this.lexer.text.split('\n')[this.lexer.line]
+    let spacing = ''
+
+    for (let i = 0; i < this.lexer.col; i++) {
+      spacing += ' '
+    }
+
+    throw Error(
+      `Parser error\n${line}\n${spacing}^\nError at line: ${this.lexer.line +
+        1} col: ${this.lexer.col + 1}\n${message}`
+    )
+  }
+
   eat(token_type) {
     if (this.next_token().type != token_type) {
-      throw Error(
+      this.error(
         `Expected ${token_type} found ${JSON.stringify(this.current_token)}`
       )
     }
@@ -65,11 +82,11 @@ export default class ParserLatex {
       return this.operator()
     }
 
-    if (this.peek_token.type == 'lbracket') {
+    if (this.peek_token.type == 'bracket' && this.peek_token.open) {
       return this.group()
     }
 
-    if (this.peek_token.type == 'rbracket') {
+    if (this.peek_token.type == 'bracket' && this.peek_token.open == false) {
       return null
     }
 
@@ -79,14 +96,13 @@ export default class ParserLatex {
     }
 
     this.next_token()
-    throw Error(`Unexpected token: ${JSON.stringify(this.current_token)}`)
+    this.error(`Unexpected token: ${JSON.stringify(this.current_token)}`)
   }
 
   keyword() {
     // keyword : KEYWORD
     //         | fraction
     //         | function
-    //         | symbol
 
     debug('keyword')
 
@@ -101,10 +117,6 @@ export default class ParserLatex {
 
     if (kwd == 'frac') {
       return this.fraction()
-    }
-
-    if (greekLetters.map(val => val.name).includes(kwd)) {
-      return this.symbol(this.current_token.value)
     }
 
     if (functions.includes(kwd.toLowerCase())) {
@@ -126,7 +138,7 @@ export default class ParserLatex {
     this.eat('keyword')
 
     if (this.current_token.value != 'frac') {
-      throw Error(
+      this.error(
         'Expected fraction found ' + JSON.stringify(this.current_token)
       )
     }
@@ -143,14 +155,19 @@ export default class ParserLatex {
   }
 
   function() {
-    // function : FUNCTION group
+    // function : FUNCTION ( group | number )
 
     debug('function')
 
     this.eat('keyword')
     let value = this.current_token.value
 
-    let content = this.group()
+    let content
+    if (this.peek().type == 'bracket') {
+      content = this.group()
+    } else {
+      content = this.number()
+    }
 
     return {
       type: 'function',
@@ -159,34 +176,32 @@ export default class ParserLatex {
     }
   }
 
-  symbol() {
-    // symbol : SYMBOL
-
-    this.eat('keyword')
-
-    debug('symbol')
-    return {
-      type: 'symbol',
-      value: this.current_token.value,
-    }
-  }
-
   group() {
     // group : LBRACKET expr RBRACKET
 
     debug('start group')
-    this.eat('lbracket')
+
+    this.eat('bracket')
+    if (this.current_token.open != true) {
+      this.error('Expected opening bracket found ' + this.current_token)
+    }
+
     let content = this.expr()
-    this.eat('rbracket')
+
+    this.eat('bracket')
+    if (this.current_token.open != false) {
+      this.error('Expected closing bracket found ' + this.current_token)
+    }
+
     debug('end group')
 
     return content
   }
 
   operator() {
-    // operator : term ((PLUS | MINUS) operator)?
+    // operator : operator_term ((PLUS | MINUS) operator)?
     debug('operator left')
-    let lhs = this.term()
+    let lhs = this.operator_term()
     let op = this.peek()
 
     if (op.type != 'operator' || (op.value != 'plus' && op.value != 'minus')) {
@@ -208,15 +223,15 @@ export default class ParserLatex {
     }
   }
 
-  term() {
-    // term : number ( ((MULTIPLY | DIVIDE) term) | variable )?
+  operator_term() {
+    // term : operator_mod ( ((MULTIPLY | DIVIDE) operator_term) | number )?
 
     debug('term left')
 
-    let lhs = this.number()
+    let lhs = this.operator_mod()
     let op = this.peek()
 
-    if (op.type == 'variable') {
+    if (op.type == 'number' || op.type == 'variable' || op.type == 'keyword') {
       op = {
         type: 'operator',
         value: 'multiply',
@@ -234,7 +249,7 @@ export default class ParserLatex {
 
     debug('term right')
 
-    let rhs = this.term()
+    let rhs = this.operator_term()
 
     return {
       type: 'operator',
@@ -244,11 +259,49 @@ export default class ParserLatex {
     }
   }
 
+  operator_mod() {
+    // operator_mod : number ( MODULUS operator_mod )?
+
+    debug('modulus left')
+
+    let lhs = this.number()
+    let op = this.peek()
+
+    if (op.type != 'operator' || op.value != 'modulus') {
+      debug('modulus only left side')
+      return lhs
+    } else {
+      // Operator token
+      this.next_token()
+    }
+
+    debug('modulus right')
+
+    let rhs = this.operator_mod()
+
+    return {
+      type: 'operator',
+      operator: 'modulus',
+      lhs,
+      rhs,
+    }
+  }
+
+  variable() {
+    this.eat('variable')
+
+    return {
+      type: 'variable',
+      value: this.current_token.value,
+    }
+  }
+
   number() {
     // number : NUMBER
     //        | UNI_OP
     //        | variable
     //        | keyword
+    //        | symbol
 
     debug('number')
 
@@ -278,11 +331,7 @@ export default class ParserLatex {
     }
 
     if (this.peek_token.type == 'variable') {
-      this.next_token()
-      return {
-        type: 'variable',
-        value: this.current_token.value,
-      }
+      return this.variable()
     }
 
     if (this.peek_token.type == 'keyword') {
@@ -290,7 +339,7 @@ export default class ParserLatex {
     }
 
     this.next_token()
-    throw Error(
+    this.error(
       'Expected number, variable, function or + - found ' +
         JSON.stringify(this.current_token)
     )
