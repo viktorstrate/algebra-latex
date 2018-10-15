@@ -304,7 +304,7 @@ describe('latex parser', () => {
 
       assert.throws(
         () => {
-          throw parser(latex)
+          parser(latex)
         },
         expectedError,
         'mismatched brackets in the end'
@@ -318,10 +318,10 @@ describe('latex parser', () => {
 
       assert.throws(
         () => {
-          throw parser(latex)
+          parser(latex)
         },
         expectedError,
-        'mismatched brackets in the end'
+        'mismatched brackets in the start'
       )
     })
   })

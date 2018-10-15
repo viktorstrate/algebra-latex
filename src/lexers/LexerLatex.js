@@ -10,6 +10,8 @@ export default class LatexLexer {
 
     this.col = 0
     this.line = 0
+    this.prev_col = 0
+    this.prev_line = 0
 
     this.current_char = () => this.text.charAt(this.pos)
     this.eat = char => {
@@ -27,20 +29,23 @@ export default class LatexLexer {
   }
 
   error(message) {
-    let line = this.text.split('\n')[this.line]
+    let line = this.text.split('\n')[this.prev_line]
     let spacing = ''
 
-    for (let i = 0; i < this.col; i++) {
+    for (let i = 0; i < this.prev_col; i++) {
       spacing += ' '
     }
 
     throw Error(
-      `Lexer error\n${line}\n${spacing}^\nError at line: ${this.lexer.line +
-        1} col: ${this.lexer.col + 1}\n${message}`
+      `Lexer error\n${line}\n${spacing}^\nError at line: ${this.prev_line +
+        1} col: ${this.prev_col + 1}\n${message}`
     )
   }
 
   next_token() {
+    this.prev_col = this.col
+    this.prev_line = this.line
+
     if (this.pos >= this.text.length) {
       return { type: 'EOF' }
     }
@@ -142,7 +147,7 @@ export default class LatexLexer {
       let bracket = this.next_token()
 
       if (bracket.type != 'bracket' && bracket.open != true) {
-        this.error('Expected opening bracket found ' + bracket)
+        this.error('Expected opening bracket found ' + JSON.stringify(bracket))
       }
 
       return bracket
@@ -152,7 +157,7 @@ export default class LatexLexer {
       let bracket = this.next_token()
 
       if (bracket.type != 'bracket' && bracket.open != false) {
-        this.error('Expected closing bracket found ' + bracket)
+        this.error('Expected closing bracket found ' + JSON.stringify(bracket))
       }
 
       return bracket
