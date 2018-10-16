@@ -6,7 +6,7 @@ import coffeequate from 'coffeequate'
 
 import AlgebraLatex from '../src/index'
 
-/*describe('API tests', () => {
+describe('API tests', () => {
   const latexEquation = 'x+\\frac{2}{3}-4=8'
   const algebraEquation = new AlgebraLatex(latexEquation)
 
@@ -17,11 +17,11 @@ import AlgebraLatex from '../src/index'
   const mathExpression = algebraExpression.toMath()
 
   it('should parse math equation', () => {
-    assert.equal(mathEquation, 'x+(2)/(3)-4=8')
+    assert.equal(mathEquation, 'x+2/3-4=8')
   })
 
   it('should parse math expression', () => {
-    assert.equal(mathExpression, 'x*(3)/(9)')
+    assert.equal(mathExpression, 'x*3/9')
   })
 
   describe('algebra.js', () => {
@@ -78,4 +78,4 @@ import AlgebraLatex from '../src/index'
       assert.equal(coffeequateExpression.toString(), 'x/3')
     })
   })
-})*/
+})

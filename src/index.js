@@ -1,11 +1,7 @@
-import LexerLatex from './lexers/LexerLatex'
-import mathFormatter from './formatters/FormatterMath.js'
-import logger from './logger'
+import LatexParser from './parsers/ParserLatex'
+import MathFormatter from './formatters/FormatterMath.js'
+import { debug } from './logger'
 import * as greekLetters from './models/greek-letters'
-
-// Functors
-const stripParenthesis = mathString =>
-  mathString.substr(1, mathString.length - 2)
 
 /**
  * A class for parsing latex math
@@ -17,14 +13,14 @@ class AlgebraLatex {
    * @return {AlgebraLatex} object to be converted
    */
   constructor(latex) {
-    logger.debug('Creating AlgebraLatex object with input: ' + latex)
+    debug('Creating AlgebraLatex object with input: ' + latex)
     this.texInput = latex
-    this.lexer = new LexerLatex(latex)
-    this.lexer.parse()
+    this.parser = new LatexParser(latex)
+    this.parser.parse()
   }
 
   getAst() {
-    return this.lexer.ast
+    return this.parser.ast
   }
 
   /**
@@ -33,7 +29,7 @@ class AlgebraLatex {
    */
   toMath() {
     if (typeof this.formattedMath === 'undefined') {
-      this.formattedMath = stripParenthesis(mathFormatter(this.getAst()))
+      this.formattedMath = new MathFormatter(this.getAst()).format()
     }
 
     return this.formattedMath
