@@ -66,7 +66,6 @@ export default class ParserLatex {
   expr() {
     // expr : operator
     //      | group
-    //      | EOF
 
     debug('expr')
 

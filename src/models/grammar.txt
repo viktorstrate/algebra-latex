@@ -1,20 +1,30 @@
+start : expr EOF
 
-root : (expr)*
-
-expr : keyword
-     | operator
+expr : operator
      | group
 
-group : LBRACKET expr (expr)* RBRACKET
+group : LBRACKET expr RBRACKET
 
-operator : number (OPERATOR number)*
+operator : operator_term ((PLUS | MINUS) operator)?
 
-number : (PLUS | MINUS) number | NUMBER
+operator_term : operator_mod ( ((MULTIPLY | DIVIDE) operator_term) | number )?
 
-keyword : BACK_SLASH (fraction | function | symbol)
+operator_mod : number ( MODULUS operator_mod )?
+
+number : NUMBER
+       | UNI_OP
+       | variable
+       | keyword
+       | symbol
+
+variable : VARIABLE
+
+symbol : ( ALPHA | BETA | GAMMA | DELTA ... )
+
+keyword : KEYWORD
+        | fraction
+        | function
 
 fraction : FRAC group group
 
-function : ( SIN | COS | TAN | ARCTAN | LOG | LN | SQRT | MAX | MIN ) group
-
-symbol : ( ALPHA | BETA | GAMMA | DELTA ... )
+function : ( SIN | COS | TAN | LOG ... ) group

@@ -1,125 +1,101 @@
 import * as greekLetters from '../models/greek-letters'
-import logger from '../logger'
+import { debug } from '../logger'
 
-/**
- * Will format a parsed latex object, to a calculatable string
- * @param  {object} parsedLatex An object parsed by "./parser.js"
- * @return {string} A calculatable string, eg. "(1+3)/4*sqrt(2)"
- */
-const formatter = parsedLatex => {
-  let formattedString = ''
+export default class MathFormatter {
+  constructor(ast) {
+    this.ast = ast
+  }
 
-  formattedString += '('
-
-  for (var i = 0; i < parsedLatex.length; i++) {
-    const item = parsedLatex[i]
-
-    if (item.type === 'number') {
-      if (i > 0) {
-        if (
-          parsedLatex[i - 1].type !== 'number' &&
-          parsedLatex[i - 1].type !== 'operator'
-        ) {
-          logger.debug(
-            'Adding * before number: ' +
-              item.value +
-              ', previous item: ' +
-              parsedLatex[i - 1].type
-          )
-          formattedString += '*'
-        }
-      }
-      formattedString += item.value
-    }
-
-    if (item.type === 'operator') {
-      if (i === 0 && (item.value === '+' || item.value === '*')) {
-        logger.debug('Structure starting with * or +, ignoring')
-      } else formattedString += item.value
-    }
-
-    if (item.type === 'variable') {
-      if (i > 0) {
-        if (parsedLatex[i - 1].type !== 'operator') {
-          logger.debug(
-            'Adding * before variable: ' +
-              item.value +
-              ', previous item: ' +
-              parsedLatex[i - 1].type
-          )
-          formattedString += '*'
-        }
-      }
-      formattedString += item.value
-    }
-
-    if (item.type === 'group') {
-      formattedString += formatter(item.value)
-    }
-
-    if (item.type === 'token') {
-      logger.debug('Handling token: ' + item.value)
-
-      if (greekLetters.getSymbol(item.value) !== null) {
-        const letter = greekLetters.getSymbol(item.value)
-        logger.debug('greek letter ' + letter)
-        formattedString += letter
-      }
-
-      if (item.value === 'frac') {
-        if (
-          parsedLatex[i + 1].type === 'group' &&
-          parsedLatex[i + 2].type === 'group'
-        ) {
-          logger.debug('Found fraction')
-          formattedString +=
-            formatter(parsedLatex[i + 1].value) +
-            '/' +
-            formatter(parsedLatex[i + 2].value)
-          i += 2
-        } else {
-          return new Error('Fraction must have 2 following parameters')
-        }
-      }
-
-      if (
-        item.value === 'cdot' ||
-        item.value === 'times' ||
-        item.value === 'ast'
-      ) {
-        formattedString += '*'
-      }
-
-      if (item.value === 'div') {
-        formattedString += '/'
-      }
-    }
-
-    if (item.type === 'function') {
-      formattedString += item.value
-
-      const nextItem = parsedLatex[i + 1]
-
-      if (item.value === 'sqrt') {
-        if (parsedLatex[i + 1].type === 'group') {
-          logger.debug('Found square root')
-          formattedString += formatter(parsedLatex[i + 1].value)
-          i++
-        } else {
-          return new Error('Square root must be followed by {}')
-        }
-      } else if (nextItem.type === 'number' || nextItem.type === 'variable') {
-        formattedString += '('
-        formattedString += nextItem.value
-        formattedString += ')'
-        i++
-      }
+  format(root = this.ast) {
+    switch (root.type) {
+      case 'operator':
+        return this.operator(root)
+      case 'number':
+        return this.number(root)
+      case 'function':
+        return this.function(root)
+      case 'variable':
+        return this.variable(root)
+      case 'equal':
+        return this.equal(root)
+      default:
+        throw Error('Unexpected type: ' + root.type)
     }
   }
 
-  formattedString += ')'
+  operator(root) {
+    let op = root.operator
 
-  return formattedString
+    switch (op) {
+      case 'plus':
+        op = '+'
+        break
+      case 'minus':
+        op = '-'
+        break
+      case 'multiply':
+        op = '*'
+        break
+      case 'divide':
+        op = '/'
+        break
+      case 'modulus':
+        op = '%'
+        break
+      default:
+    }
+
+    let lhs = this.format(root.lhs)
+    let rhs = this.format(root.rhs)
+
+    if (op == '*' || op == '/') {
+      if (
+        root.lhs.type == 'operator' &&
+        (root.lhs.operator != 'multiply' && root.lhs.operator != 'divide')
+      ) {
+        lhs = `(${lhs})`
+      }
+
+      if (
+        root.rhs.type == 'operator' &&
+        (root.rhs.operator != 'multiply' && root.rhs.operator != 'divide')
+      ) {
+        rhs = `(${rhs})`
+      }
+    }
+
+    if (op == '%') {
+      if (root.lhs.type == 'operator') {
+        lhs = `(${lhs})`
+      }
+
+      if (root.rhs.type == 'operator') {
+        rhs = `(${rhs})`
+      }
+    }
+
+    return lhs + op + rhs
+  }
+
+  number(root) {
+    return `${root.value}`
+  }
+
+  function(root) {
+    return `${root.value}(${this.format(root.content)})`
+  }
+
+  variable(root) {
+    let greekLetter = greekLetters.getSymbol(root.value)
+
+    if (greekLetter) {
+      return greekLetter
+    }
+
+    return `${root.value}`
+  }
+
+  equal(root) {
+    return `${this.format(root.lhs)}=${this.format(root.rhs)}`
+  }
 }
-
-export default formatter
