@@ -115,6 +115,112 @@ describe('latex parser', () => {
     })
   })
 
+  it('operators with groups', () => {
+    const latex = '3*(4+2)*{3+4}'
+
+    assert.deepEqual(parser(latex), {
+      type: 'operator',
+      operator: 'multiply',
+      lhs: {
+        type: 'number',
+        value: 3,
+      },
+      rhs: {
+        type: 'operator',
+        operator: 'multiply',
+        lhs: {
+          type: 'operator',
+          operator: 'plus',
+          lhs: {
+            type: 'number',
+            value: 4,
+          },
+          rhs: {
+            type: 'number',
+            value: 2,
+          },
+        },
+        rhs: {
+          type: 'operator',
+          operator: 'plus',
+          lhs: {
+            type: 'number',
+            value: 3,
+          },
+          rhs: {
+            type: 'number',
+            value: 4,
+          },
+        },
+      },
+    })
+  })
+
+  it('parse exponent examples', () => {
+    const latex = '3^2*a^{2*4}*b^(2)3'
+
+    assert.deepEqual(parser(latex), {
+      type: 'operator',
+      operator: 'multiply',
+      lhs: {
+        type: 'operator',
+        operator: 'exponent',
+        lhs: {
+          type: 'number',
+          value: 3,
+        },
+        rhs: {
+          type: 'number',
+          value: 2,
+        },
+      },
+      rhs: {
+        type: 'operator',
+        operator: 'multiply',
+        lhs: {
+          type: 'operator',
+          operator: 'exponent',
+          lhs: {
+            type: 'variable',
+            value: 'a',
+          },
+          rhs: {
+            type: 'operator',
+            operator: 'multiply',
+            lhs: {
+              type: 'number',
+              value: 2,
+            },
+            rhs: {
+              type: 'number',
+              value: 4,
+            },
+          },
+        },
+        rhs: {
+          type: 'operator',
+          operator: 'multiply',
+          lhs: {
+            type: 'operator',
+            operator: 'exponent',
+            lhs: {
+              type: 'variable',
+              value: 'b',
+            },
+            rhs: {
+              type: 'number',
+              value: 2,
+            },
+          },
+          rhs: {
+            type: 'number',
+            value: 3,
+          },
+        },
+      },
+    })
+  })
+
   describe('multiple character variables', () => {
     it('parse multiple character variables', () => {
       const latex = 'var+a var'
@@ -291,6 +397,40 @@ describe('latex parser', () => {
           },
           type: 'function',
           value: 'arcsin',
+        },
+      })
+    })
+  })
+
+  describe('equations', () => {
+    it('parse simple equation', () => {
+      const latex = 'y=a x + b'
+
+      assert.deepEqual(parser(latex), {
+        type: 'equation',
+        lhs: {
+          type: 'variable',
+          value: 'y',
+        },
+        rhs: {
+          type: 'operator',
+          operator: 'plus',
+          lhs: {
+            type: 'operator',
+            operator: 'multiply',
+            lhs: {
+              type: 'variable',
+              value: 'a',
+            },
+            rhs: {
+              type: 'variable',
+              value: 'x',
+            },
+          },
+          rhs: {
+            type: 'variable',
+            value: 'b',
+          },
         },
       })
     })

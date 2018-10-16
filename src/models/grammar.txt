@@ -1,4 +1,6 @@
-start : expr EOF
+start : equation EOF
+
+equation : expr EQUAL expr
 
 expr : operator
      | group
@@ -9,7 +11,9 @@ operator : operator_term ((PLUS | MINUS) operator)?
 
 operator_term : operator_mod ( ((MULTIPLY | DIVIDE) operator_term) | number )?
 
-operator_mod : number ( MODULUS operator_mod )?
+operator_mod : operator_exp ( MODULUS operator_mod )?
+
+operator_exp : number ( EXPONENT expr )?
 
 number : NUMBER
        | UNI_OP

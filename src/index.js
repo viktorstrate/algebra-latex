@@ -1,5 +1,5 @@
 import LexerLatex from './lexers/LexerLatex'
-import mathFormatter from './formatters/format-math.js'
+import mathFormatter from './formatters/FormatterMath.js'
 import logger from './logger'
 import * as greekLetters from './models/greek-letters'
 

@@ -13,7 +13,7 @@ export default class ParserLatex {
 
   parse() {
     debug('\nLatex parser .parse()')
-    this.ast = this.expr()
+    this.ast = this.equation()
 
     this.eat('EOF')
 
@@ -60,6 +60,25 @@ export default class ParserLatex {
       this.error(
         `Expected ${token_type} found ${JSON.stringify(this.current_token)}`
       )
+    }
+  }
+
+  equation() {
+    // equation : expr ( EQUAL expr )?
+    let lhs = this.expr()
+
+    if (this.peek().type != 'equal') {
+      return lhs
+    } else {
+      this.next_token()
+    }
+
+    let rhs = this.expr()
+
+    return {
+      type: 'equation',
+      lhs,
+      rhs,
     }
   }
 
@@ -216,8 +235,8 @@ export default class ParserLatex {
 
     return {
       type: 'operator',
-      lhs,
       operator: op.value,
+      lhs,
       rhs,
     }
   }
@@ -252,18 +271,18 @@ export default class ParserLatex {
 
     return {
       type: 'operator',
-      lhs,
       operator: op.value,
+      lhs,
       rhs,
     }
   }
 
   operator_mod() {
-    // operator_mod : number ( MODULUS operator_mod )?
+    // operator_mod : operator_exp ( MODULUS operator_mod )?
 
     debug('modulus left')
 
-    let lhs = this.number()
+    let lhs = this.operator_exp()
     let op = this.peek()
 
     if (op.type != 'operator' || op.value != 'modulus') {
@@ -286,6 +305,30 @@ export default class ParserLatex {
     }
   }
 
+  operator_exp() {
+    // operator_exp : number ( EXPONENT operator_exp )?
+
+    let lhs = this.number()
+    let op = this.peek()
+
+    if (op.type != 'operator' || op.value != 'exponent') {
+      debug('modulus only left side')
+      return lhs
+    } else {
+      // Operator token
+      this.next_token()
+    }
+
+    let rhs = this.operator_exp()
+
+    return {
+      type: 'operator',
+      operator: 'exponent',
+      lhs,
+      rhs,
+    }
+  }
+
   variable() {
     this.eat('variable')
 
@@ -301,6 +344,7 @@ export default class ParserLatex {
     //        | variable
     //        | keyword
     //        | symbol
+    //        | group
 
     debug('number')
 
@@ -337,9 +381,13 @@ export default class ParserLatex {
       return this.keyword()
     }
 
+    if (this.peek_token.type == 'bracket') {
+      return this.group()
+    }
+
     this.next_token()
     this.error(
-      'Expected number, variable, function or + - found ' +
+      'Expected number, variable, function, group, or + - found ' +
         JSON.stringify(this.current_token)
     )
   }

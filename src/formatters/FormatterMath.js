@@ -16,8 +16,8 @@ export default class MathFormatter {
         return this.function(root)
       case 'variable':
         return this.variable(root)
-      case 'equal':
-        return this.equal(root)
+      case 'equation':
+        return this.equation(root)
       default:
         throw Error('Unexpected type: ' + root.type)
     }
@@ -42,6 +42,9 @@ export default class MathFormatter {
       case 'modulus':
         op = '%'
         break
+      case 'exponent':
+        op = '^'
+        break
       default:
     }
 
@@ -64,7 +67,7 @@ export default class MathFormatter {
       }
     }
 
-    if (op == '%') {
+    if (op == '%' || op == '^') {
       if (root.lhs.type == 'operator') {
         lhs = `(${lhs})`
       }
@@ -95,7 +98,7 @@ export default class MathFormatter {
     return `${root.value}`
   }
 
-  equal(root) {
+  equation(root) {
     return `${this.format(root.lhs)}=${this.format(root.rhs)}`
   }
 }

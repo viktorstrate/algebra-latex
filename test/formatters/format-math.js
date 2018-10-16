@@ -1,4 +1,4 @@
-import MathFormatter from '../../src/formatters/format-math.js'
+import MathFormatter from '../../src/formatters/FormatterMath.js'
 import assert from 'assert'
 
 describe('formatter', () => {
@@ -40,6 +40,82 @@ describe('formatter', () => {
     assert.equal(format(ast), '(2+3)*5/1')
   })
 
+  describe('exponents', () => {
+    it('parse expression with exponents', () => {
+      const ast = {
+        type: 'operator',
+        operator: 'minus',
+        lhs: {
+          type: 'operator',
+          operator: 'exponent',
+          lhs: {
+            type: 'number',
+            value: 3,
+          },
+          rhs: {
+            type: 'operator',
+            operator: 'plus',
+            lhs: {
+              type: 'number',
+              value: 6,
+            },
+            rhs: {
+              type: 'number',
+              value: 4,
+            },
+          },
+        },
+        rhs: {
+          type: 'operator',
+          operator: 'exponent',
+          lhs: {
+            type: 'variable',
+            value: 'var',
+          },
+          rhs: {
+            type: 'number',
+            value: 2,
+          },
+        },
+      }
+
+      assert.equal(format(ast), '3^(6+4)-var^2')
+    })
+
+    it('parse nested exponents', () => {
+      const ast = {
+        type: 'operator',
+        operator: 'exponent',
+        lhs: {
+          type: 'number',
+          value: 3,
+        },
+        rhs: {
+          type: 'operator',
+          operator: 'exponent',
+          lhs: {
+            type: 'number',
+            value: 5,
+          },
+          rhs: {
+            type: 'operator',
+            operator: 'minus',
+            lhs: {
+              type: 'number',
+              value: 22,
+            },
+            rhs: {
+              type: 'number',
+              value: 3,
+            },
+          },
+        },
+      }
+
+      assert.equal(format(ast), '3^(5^(22-3))')
+    })
+  })
+
   it('should format latex with spaces correctly', () => {
     const parsedLatex = {
       type: 'operator',
@@ -75,7 +151,7 @@ describe('formatter', () => {
   describe('equations', () => {
     it('should format simple equation with variables and numbers', () => {
       const parsedLatex = {
-        type: 'equal',
+        type: 'equation',
         lhs: {
           type: 'variable',
           value: 'y',

@@ -115,6 +115,34 @@ describe('latex lexer', () => {
     assert.deepEqual(parse(latex), expected)
   })
 
+  it('parse operators', () => {
+    const latex = '32^44=x'
+
+    const expected = [
+      {
+        type: 'number',
+        value: 32,
+      },
+      {
+        type: 'operator',
+        value: 'exponent',
+      },
+      {
+        type: 'number',
+        value: 44,
+      },
+      {
+        type: 'equal',
+      },
+      {
+        type: 'variable',
+        value: 'x',
+      },
+    ]
+
+    assert.deepEqual(parse(latex), expected)
+  })
+
   describe('error handling', () => {
     it('handle bracket error correctly', () => {
       const latex = '\\left\n { \\right\\Alpha'

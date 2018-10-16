@@ -127,6 +127,16 @@ export default class LatexLexer {
       return { type: 'operator', value: 'divide' }
     }
 
+    if (this.current_char() == '^') {
+      this.increment()
+      return { type: 'operator', value: 'exponent' }
+    }
+
+    if (this.current_char() == '=') {
+      this.increment()
+      return { type: 'equal' }
+    }
+
     this.error('Unknown symbol: ' + this.current_char())
   }
 
