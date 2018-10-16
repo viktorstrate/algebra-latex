@@ -1,301 +1,228 @@
-import formatter from '../../src/formatters/format-math.js'
+import MathFormatter from '../../src/formatters/FormatterMath.js'
 import assert from 'assert'
 
 describe('formatter', () => {
-  it('should format a general latex example', () => {
-    const parsedLatex = [
-      {
-        type: 'token',
-        value: 'frac'
-      },
-      {
-        type: 'group',
-        value: [
-          {
-            type: 'number',
-            value: '2'
-          },
-          {
-            type: 'operator',
-            value: '^'
-          },
-          {
-            type: 'group',
-            value: [
-              {
-                type: 'number',
-                value: '3'
-              }
-            ]
-          },
-          {
-            type: 'operator',
-            value: '+'
-          },
-          {
-            type: 'number',
-            value: '3'
-          }
-        ]
-      },
-      {
-        type: 'group',
-        value: [
-          {
-            type: 'operator',
-            value: '+'
-          },
-          {
-            type: 'number',
-            value: '3'
-          }
-        ]
-      }
-    ]
+  let format = ast => {
+    let formatter = new MathFormatter(ast)
+    return formatter.format()
+  }
 
-    assert.equal(formatter(parsedLatex), '((2^(3)+3)/(3))', 'Long latex example')
+  it('should format a general latex example', () => {
+    const ast = {
+      type: 'operator',
+      operator: 'multiply',
+      lhs: {
+        type: 'operator',
+        operator: 'plus',
+        lhs: {
+          type: 'number',
+          value: 2,
+        },
+        rhs: {
+          type: 'number',
+          value: 3,
+        },
+      },
+      rhs: {
+        type: 'operator',
+        operator: 'divide',
+        lhs: {
+          type: 'number',
+          value: 5,
+        },
+        rhs: {
+          type: 'number',
+          value: 1,
+        },
+      },
+    }
+
+    assert.equal(format(ast), '(2+3)*5/1')
+  })
+
+  describe('exponents', () => {
+    it('parse expression with exponents', () => {
+      const ast = {
+        type: 'operator',
+        operator: 'minus',
+        lhs: {
+          type: 'operator',
+          operator: 'exponent',
+          lhs: {
+            type: 'number',
+            value: 3,
+          },
+          rhs: {
+            type: 'operator',
+            operator: 'plus',
+            lhs: {
+              type: 'number',
+              value: 6,
+            },
+            rhs: {
+              type: 'number',
+              value: 4,
+            },
+          },
+        },
+        rhs: {
+          type: 'operator',
+          operator: 'exponent',
+          lhs: {
+            type: 'variable',
+            value: 'var',
+          },
+          rhs: {
+            type: 'number',
+            value: 2,
+          },
+        },
+      }
+
+      assert.equal(format(ast), '3^(6+4)-var^2')
+    })
+
+    it('parse nested exponents', () => {
+      const ast = {
+        type: 'operator',
+        operator: 'exponent',
+        lhs: {
+          type: 'number',
+          value: 3,
+        },
+        rhs: {
+          type: 'operator',
+          operator: 'exponent',
+          lhs: {
+            type: 'number',
+            value: 5,
+          },
+          rhs: {
+            type: 'operator',
+            operator: 'minus',
+            lhs: {
+              type: 'number',
+              value: 22,
+            },
+            rhs: {
+              type: 'number',
+              value: 3,
+            },
+          },
+        },
+      }
+
+      assert.equal(format(ast), '3^(5^(22-3))')
+    })
   })
 
   it('should format latex with spaces correctly', () => {
-    const parsedLatex = [
-      {
+    const parsedLatex = {
+      type: 'operator',
+      operator: 'multiply',
+      lhs: {
         type: 'variable',
-        value: 'var'
-      }, {
-        type: 'token',
-        value: ' '
-      }, {
+        value: 'var',
+      },
+      rhs: {
         type: 'variable',
-        value: 'var'
-      }
-    ]
+        value: 'var',
+      },
+    }
 
-    assert.equal(formatter(parsedLatex), '(var*var)')
+    assert.equal(format(parsedLatex), 'var*var')
   })
 
   describe('functions', () => {
     it('should format sqrt function', () => {
-      const parsedLatex = [
-        {
-          type: 'function',
-          value: 'sqrt'
-        }, {
-          type: 'group',
-          value: [
-            {
-              type: 'number',
-              value: '123'
-            }
-          ]
-        }
-      ]
-
-      assert.equal(formatter(parsedLatex), '(sqrt(123))', 'sqrt example')
-    })
-
-    it('should format basic trigonometry functions', () => {
-      const parsedLatex = [{
+      const parsedLatex = {
         type: 'function',
-        value: 'sin'
-      }, {
-        type: 'operator',
-        value: '('
-      }, {
-        type: 'number',
-        value: '3'
-      }, {
-        type: 'operator',
-        value: '*'
-      }, {
-        type: 'number',
-        value: '4'
-      }, {
-        type: 'operator',
-        value: ')'
-      }, {
-        type: 'operator',
-        value: '-'
-      }, {
-        type: 'function',
-        value: 'cos'
-      }, {
-        type: 'number',
-        value: '5'
-      }, {
-        type: 'variable',
-        value: 'var'
-      }, {
-        type: 'operator',
-        value: '*'
-      }, {
-        type: 'function',
-        value: 'tan'
-      }, {
-        type: 'group',
-        value: [
-          {
-            type: 'number',
-            value: 6
-          }
-        ]
-      }, {
-        type: 'variable',
-        value: 'var'
-      }]
+        value: 'sqrt',
+        content: {
+          type: 'number',
+          value: 123,
+        },
+      }
 
-      assert.equal(formatter(parsedLatex), '(sin(3*4)-cos(5)*var*tan(6)*var)')
+      assert.equal(format(parsedLatex), 'sqrt(123)', 'sqrt example')
     })
   })
 
   describe('equations', () => {
     it('should format simple equation with variables and numbers', () => {
-      const parsedLatex = [
-        {
+      const parsedLatex = {
+        type: 'equation',
+        lhs: {
           type: 'variable',
-          value: 'y'
-        }, {
+          value: 'y',
+        },
+        rhs: {
           type: 'operator',
-          value: '='
-        }, {
-          type: 'variable',
-          value: 'a'
-        }, {
-          type: 'variable',
-          value: 'x'
-        }, {
-          type: 'operator',
-          value: '+'
-        }, {
-          type: 'number',
-          value: '2'
-        }, {
-          type: 'variable',
-          value: 'b'
-        }
-      ]
+          operator: 'plus',
+          lhs: {
+            type: 'operator',
+            operator: 'multiply',
+            lhs: {
+              type: 'variable',
+              value: 'a',
+            },
+            rhs: {
+              type: 'variable',
+              value: 'x',
+            },
+          },
+          rhs: {
+            type: 'operator',
+            operator: 'multiply',
+            lhs: {
+              type: 'number',
+              value: 2,
+            },
+            rhs: {
+              type: 'variable',
+              value: 'b',
+            },
+          },
+        },
+      }
 
-      assert.equal(formatter(parsedLatex), '(y=a*x+2*b)')
-    })
-
-    it('should format equation with only variables', () => {
-      const parsedLatex = [
-        {
-          type: 'variable',
-          value: 'a'
-        }, {
-          type: 'variable',
-          value: 'b'
-        }, {
-          type: 'variable',
-          value: 'c'
-        }, {
-          type: 'operator',
-          value: '='
-        }, {
-          type: 'variable',
-          value: 'a'
-        }, {
-          type: 'variable',
-          value: 'b'
-        }, {
-          type: 'variable',
-          value: 'c'
-        }
-      ]
-
-      assert.equal(formatter(parsedLatex), '(a*b*c=a*b*c)')
+      assert.equal(format(parsedLatex), 'y=a*x+2*b')
     })
   })
 
   describe('greek letters', () => {
     it('should format lower case', () => {
-      const parsedLatex = [
-        {
-          type: 'token',
-          value: 'alpha'
-        }, {
-          type: 'token',
-          value: 'delta'
-        }, {
-          type: 'token',
-          value: 'gamma'
-        }
-      ]
+      const parsedLatex = {
+        type: 'operator',
+        operator: 'multiply',
+        lhs: {
+          type: 'variable',
+          value: 'alpha',
+        },
+        rhs: {
+          type: 'variable',
+          value: 'beta',
+        },
+      }
 
-      assert.equal(formatter(parsedLatex), '(αδγ)')
+      assert.equal(format(parsedLatex), 'α*β')
     })
 
     it('should format upper case', () => {
-      const parsedLatex = [
-        {
-          type: 'token',
-          value: 'Alpha'
-        }, {
-          type: 'token',
-          value: 'Delta'
-        }, {
-          type: 'token',
-          value: 'Gamma'
-        }
-      ]
-
-      assert.equal(formatter(parsedLatex), '(ΑΔΓ)')
-    })
-  })
-
-  describe('error handling', () => {
-    it('Should return error for fragments', () => {
-      const latex1 = [
-        {
-          type: 'token',
-          value: 'frac'
+      const parsedLatex = {
+        type: 'operator',
+        operator: 'multiply',
+        lhs: {
+          type: 'variable',
+          value: 'Alpha',
         },
-        {
-          type: 'group',
-          value: [
-            {
-              type: 'number',
-              value: '1'
-            }
-          ]
+        rhs: {
+          type: 'variable',
+          value: 'Delta',
         },
-        {
-          type: 'number',
-          value: '2'
-        }
-      ]
+      }
 
-      const latex2 = [
-        {
-          type: 'token',
-          value: 'frac'
-        },
-        {
-          type: 'number',
-          value: '2'
-        }
-      ]
-
-      const expectedError = /Fraction must have 2 following parameters/
-
-      assert.throws(() => { throw formatter(latex1) }, expectedError, 'Example with one parameter following fraction')
-      assert.throws(() => { throw formatter(latex2) }, expectedError, 'Example with no parameters following fraction')
-    })
-
-    it('should handle square roots correctly', () => {
-      const latex = [
-        {
-          type: 'function',
-          value: 'sqrt'
-        }, {
-          type: 'number',
-          value: '23'
-        }
-      ]
-
-      const expectedError = /Square root must be followed by/
-
-      assert.throws(() => { throw formatter(latex) }, expectedError)
+      assert.equal(format(parsedLatex), 'Α*Δ')
     })
   })
 })

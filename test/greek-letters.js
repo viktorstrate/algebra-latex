@@ -1,4 +1,4 @@
-import * as greekLetters from '../src/tokens/greek-letters'
+import * as greekLetters from '../src/models/greek-letters'
 import assert from 'assert'
 
 describe('greek letters', () => {

@@ -17,11 +17,11 @@ describe('API tests', () => {
   const mathExpression = algebraExpression.toMath()
 
   it('should parse math equation', () => {
-    assert.equal(mathEquation, 'x+(2)/(3)-4=8')
+    assert.equal(mathEquation, 'x+2/3-4=8')
   })
 
   it('should parse math expression', () => {
-    assert.equal(mathExpression, 'x*(3)/(9)')
+    assert.equal(mathExpression, 'x*3/9')
   })
 
   describe('algebra.js', () => {
@@ -53,7 +53,9 @@ describe('API tests', () => {
     })
 
     it('should fail to parse equation', () => {
-      assert.throws(() => { throw algebriteEquation }, /Algebrite can not handle equations, only expressions/)
+      assert.throws(() => {
+        throw algebriteEquation
+      }, /Algebrite can not handle equations, only expressions/)
     })
 
     it('should parse greek letters correctly', () => {
