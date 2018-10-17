@@ -84,7 +84,6 @@ export default class ParserLatex {
 
   expr() {
     // expr : operator
-    //      | group
 
     debug('expr')
 
@@ -95,13 +94,10 @@ export default class ParserLatex {
       this.peek_token.type == 'operator' ||
       this.peek_token.type == 'variable' ||
       this.peek_token.type == 'function' ||
-      this.peek_token.type == 'keyword'
+      this.peek_token.type == 'keyword' ||
+      this.peek_token.type == 'bracket'
     ) {
       return this.operator()
-    }
-
-    if (this.peek_token.type == 'bracket' && this.peek_token.open) {
-      return this.group()
     }
 
     if (this.peek_token.type == 'bracket' && this.peek_token.open == false) {

@@ -3,7 +3,6 @@ start : equation EOF
 equation : expr EQUAL expr
 
 expr : operator
-     | group
 
 group : LBRACKET expr RBRACKET
 
@@ -20,6 +19,7 @@ number : NUMBER
        | variable
        | keyword
        | symbol
+       | group
 
 variable : VARIABLE
 

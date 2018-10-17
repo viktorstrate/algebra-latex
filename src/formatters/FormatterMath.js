@@ -51,31 +51,30 @@ export default class MathFormatter {
     let lhs = this.format(root.lhs)
     let rhs = this.format(root.rhs)
 
-    if (op == '*' || op == '/') {
-      if (
-        root.lhs.type == 'operator' &&
-        (root.lhs.operator != 'multiply' && root.lhs.operator != 'divide')
-      ) {
-        lhs = `(${lhs})`
-      }
+    const precedensOrder = [
+      ['modulus'],
+      ['exponent'],
+      ['multiply', 'divide'],
+      ['plus', 'minus'],
+    ]
 
-      if (
-        root.rhs.type == 'operator' &&
-        (root.rhs.operator != 'multiply' && root.rhs.operator != 'divide')
-      ) {
-        rhs = `(${rhs})`
-      }
+    const higherPrecedens = (a, b) => {
+      const depth = op => precedensOrder.findIndex(val => val.includes(op))
+
+      return depth(b) > depth(a)
     }
 
-    if (op == '%' || op == '^') {
-      if (root.lhs.type == 'operator') {
-        lhs = `(${lhs})`
-      }
+    const shouldHaveParenthesis = child =>
+      child.type == 'operator' && higherPrecedens(root.operator, child.operator)
 
-      if (root.rhs.type == 'operator') {
-        rhs = `(${rhs})`
-      }
-    }
+    let lhsParen = shouldHaveParenthesis(root.lhs)
+    let rhsParen = shouldHaveParenthesis(root.rhs)
+
+    // Special case for division
+    rhsParen = rhsParen || (op == '/' && root.rhs.type == 'operator')
+
+    lhs = lhsParen ? `(${lhs})` : lhs
+    rhs = rhsParen ? `(${rhs})` : rhs
 
     return lhs + op + rhs
   }

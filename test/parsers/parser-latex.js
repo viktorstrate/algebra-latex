@@ -115,32 +115,55 @@ describe('latex parser', () => {
     })
   })
 
-  it('operators with groups', () => {
-    const latex = '3*(4+2)*{3+4}'
+  describe('groups', () => {
+    it('operators with groups', () => {
+      const latex = '3*(4+2)*{3+4}'
 
-    assert.deepEqual(parser(latex), {
-      type: 'operator',
-      operator: 'multiply',
-      lhs: {
-        type: 'number',
-        value: 3,
-      },
-      rhs: {
+      assert.deepEqual(parser(latex), {
         type: 'operator',
         operator: 'multiply',
         lhs: {
-          type: 'operator',
-          operator: 'plus',
-          lhs: {
-            type: 'number',
-            value: 4,
-          },
-          rhs: {
-            type: 'number',
-            value: 2,
-          },
+          type: 'number',
+          value: 3,
         },
         rhs: {
+          type: 'operator',
+          operator: 'multiply',
+          lhs: {
+            type: 'operator',
+            operator: 'plus',
+            lhs: {
+              type: 'number',
+              value: 4,
+            },
+            rhs: {
+              type: 'number',
+              value: 2,
+            },
+          },
+          rhs: {
+            type: 'operator',
+            operator: 'plus',
+            lhs: {
+              type: 'number',
+              value: 3,
+            },
+            rhs: {
+              type: 'number',
+              value: 4,
+            },
+          },
+        },
+      })
+    })
+
+    it('parse expression starting with a group', () => {
+      const latex = '{3+4}*5'
+
+      assert.deepEqual(parser(latex), {
+        type: 'operator',
+        operator: 'multiply',
+        lhs: {
           type: 'operator',
           operator: 'plus',
           lhs: {
@@ -152,7 +175,11 @@ describe('latex parser', () => {
             value: 4,
           },
         },
-      },
+        rhs: {
+          type: 'number',
+          value: 5,
+        },
+      })
     })
   })
 

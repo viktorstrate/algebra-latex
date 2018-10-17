@@ -7,7 +7,7 @@ describe('formatter', () => {
     return formatter.format()
   }
 
-  it('should format a general latex example', () => {
+  it('format a general latex example', () => {
     const ast = {
       type: 'operator',
       operator: 'multiply',
@@ -38,6 +38,31 @@ describe('formatter', () => {
     }
 
     assert.equal(format(ast), '(2+3)*5/1')
+  })
+
+  it('format division', () => {
+    const ast = {
+      type: 'operator',
+      operator: 'divide',
+      lhs: {
+        type: 'number',
+        value: 1,
+      },
+      rhs: {
+        type: 'operator',
+        operator: 'multiply',
+        lhs: {
+          type: 'number',
+          value: 3,
+        },
+        rhs: {
+          type: 'number',
+          value: 4,
+        },
+      },
+    }
+
+    assert.equal(format(ast), '1/(3*4)')
   })
 
   describe('exponents', () => {
@@ -112,7 +137,7 @@ describe('formatter', () => {
         },
       }
 
-      assert.equal(format(ast), '3^(5^(22-3))')
+      assert.equal(format(ast), '3^5^(22-3)')
     })
   })
 

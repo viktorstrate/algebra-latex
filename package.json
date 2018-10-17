@@ -5,13 +5,13 @@
     "build": "babel src -d lib",
     "start": "node .",
     "prettify": "prettier **/*.js --write",
-    "test": "npm run mocha",
+    "test": "mocha --require babel-core/register --require babel-polyfill --recursive",
     "test:watch": "mocha --require babel-core/register --recursive --watch",
-    "mocha": "mocha --require babel-core/register --recursive",
     "prepublish": "npm run build"
   },
   "description": "Parse Latex math to a regular math string or algebra.js",
   "main": "./lib/index.js",
+  "bin": "./lib/cli.js",
   "repository": "https://github.com/viktorstrate/latex-mathify.git",
   "author": "viktorstrate <viktorstrate@gmail.com>",
   "license": "MIT",
@@ -22,9 +22,7 @@
     "babel-preset-env": "^1.1.8",
     "coffeequate": "^1.3.0",
     "eslint-plugin-import": "^2.8.0",
-    "mocha": "^4.0.1"
-  },
-  "dependencies": {
+    "mocha": "^4.0.1",
     "prettier": "^1.14.3"
   }
 }
