@@ -1,7 +1,8 @@
-import LatexParser from './parsers/ParserLatex'
+import Parser from './Parser'
 import MathFormatter from './formatters/FormatterMath.js'
 import { debug } from './logger'
 import * as greekLetters from './models/greek-letters'
+import LatexLexer from './lexers/LexerLatex'
 
 /**
  * A class for parsing latex math
@@ -15,7 +16,7 @@ class AlgebraLatex {
   constructor(latex) {
     debug('Creating AlgebraLatex object with input: ' + latex)
     this.texInput = latex
-    this.parser = new LatexParser(latex)
+    this.parser = new Parser(latex, LatexLexer)
     this.parser.parse()
   }
 

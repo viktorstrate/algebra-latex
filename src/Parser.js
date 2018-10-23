@@ -1,11 +1,15 @@
-import LexerLatex from '../lexers/LexerLatex'
-import functions from '../models/functions'
-import greekLetters from '../models/greek-letters'
-import { debug } from '../logger'
+import LexerClass from './lexers/Lexer'
+import functions from './models/functions'
+import greekLetters from './models/greek-letters'
+import { debug } from './logger'
 
 export default class ParserLatex {
-  constructor(latex) {
-    this.lexer = new LexerLatex(latex)
+  constructor(latex, Lexer) {
+    // if (!(Lexer instanceof LexerClass)) {
+    //   throw Error('Please parse a valid lexer as second argument')
+    // }
+
+    this.lexer = new Lexer(latex)
     this.ast = null
     this.current_token = null
     this.peek_token = null
@@ -361,10 +365,11 @@ export default class ParserLatex {
         this.current_token.value == 'minus'
       ) {
         let prefix = this.current_token.value
+        let number = this.number()
+
         return {
-          type: 'uni-operator',
-          prefix,
-          content: this.number(),
+          type: 'number',
+          value: prefix == 'minus' ? -number.value : number.value,
         }
       }
     }

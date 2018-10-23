@@ -1,9 +1,10 @@
-import ParserLatex from '../../src/parsers/ParserLatex'
+import Parser from '../../src/Parser'
+import LatexLexer from '../../src/lexers/LexerLatex'
 import assert from 'assert'
 
 describe('latex parser', () => {
   let parser = latex => {
-    let lexerLatex = new ParserLatex(latex)
+    let lexerLatex = new Parser(latex, LatexLexer)
     return lexerLatex.parse()
   }
 
