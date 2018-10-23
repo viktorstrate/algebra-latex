@@ -32,6 +32,11 @@ describe('API tests', () => {
     assert.equal(algebraExpression.toLatex(), 'x\\cdot \\frac{3}{9}')
   })
 
+  it('chain functions', () => {
+    const result = new AlgebraLatex().parseMath('1/sqrt(2)').toLatex()
+    assert.equal(result, '\\frac{1}{\\sqrt\\left(2\\right)}')
+  })
+
   describe('algebra.js', () => {
     const algebraJSEquation = algebraEquation.toAlgebra(algebraJS)
     const algebraJSExpression = algebraExpression.toAlgebra(algebraJS)

@@ -27,12 +27,16 @@ class AlgebraLatex {
     this.input = latex
     this.parser = new Parser(latex, LatexLexer)
     this.parser.parse()
+
+    return this
   }
 
   parseMath(math) {
     this.input = math
     this.parser = new Parser(math, MathLexer)
     this.parser.parse()
+
+    return this
   }
 
   getAst() {
