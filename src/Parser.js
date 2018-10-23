@@ -219,7 +219,7 @@ export default class ParserLatex {
   operator() {
     // operator : operator_term ((PLUS | MINUS) operator)?
     debug('operator left')
-    let lhs = this.operator_term()
+    let lhs = this.operator_multiply()
     let op = this.peek()
 
     if (op.type != 'operator' || (op.value != 'plus' && op.value != 'minus')) {
@@ -241,12 +241,12 @@ export default class ParserLatex {
     }
   }
 
-  operator_term() {
-    // term : operator_mod ( ((MULTIPLY | DIVIDE) operator_term) | number )?
+  operator_multiply() {
+    // operator_multiply : operator_divide ( (MULTIPLY operator_multiply) | number )?
 
-    debug('term left')
+    debug('op mul left')
 
-    let lhs = this.operator_mod()
+    let lhs = this.operator_divide()
     let op = this.peek()
 
     if (op.type == 'number' || op.type == 'variable' || op.type == 'keyword') {
@@ -265,13 +265,41 @@ export default class ParserLatex {
       this.next_token()
     }
 
-    debug('term right')
+    debug('op mul right')
 
-    let rhs = this.operator_term()
+    let rhs = this.operator_multiply()
 
     return {
       type: 'operator',
       operator: op.value,
+      lhs,
+      rhs,
+    }
+  }
+
+  operator_divide() {
+    // operator_divide : operator_mod ( DIVIDE operator_divide )?
+
+    debug('op div left')
+
+    let lhs = this.operator_mod()
+    let op = this.peek()
+
+    if (op.type != 'operator' || op.value != 'divide') {
+      debug('divide only left side')
+      return lhs
+    } else {
+      // Operator token
+      this.next_token()
+    }
+
+    debug('op div right')
+
+    let rhs = this.operator_divide()
+
+    return {
+      type: 'operator',
+      operator: 'divide',
       lhs,
       rhs,
     }

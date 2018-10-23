@@ -1,8 +1,10 @@
 import Parser from './Parser'
-import MathFormatter from './formatters/FormatterMath.js'
+import MathFormatter from './formatters/FormatterMath'
+import LatexFormatter from './formatters/FormatterLatex'
 import { debug } from './logger'
 import * as greekLetters from './models/greek-letters'
 import LatexLexer from './lexers/LexerLatex'
+import MathLexer from './lexers/LexerMath'
 
 /**
  * A class for parsing latex math
@@ -10,13 +12,26 @@ import LatexLexer from './lexers/LexerLatex'
 class AlgebraLatex {
   /**
    * Create an AlgebraLatex object, to be converted
-   * @param  {String} latex The latex to parse
+   * @deprecated @param  {String} latex Optional, if defined it will automatically parse the input as latex
    * @return {AlgebraLatex} object to be converted
    */
   constructor(latex) {
-    debug('Creating AlgebraLatex object with input: ' + latex)
-    this.texInput = latex
+    if (typeof latex == 'undefined') {
+      return
+    }
+
+    this.parseLatex(latex)
+  }
+
+  parseLatex(latex) {
+    this.input = latex
     this.parser = new Parser(latex, LatexLexer)
+    this.parser.parse()
+  }
+
+  parseMath(math) {
+    this.input = math
+    this.parser = new Parser(math, MathLexer)
     this.parser.parse()
   }
 
@@ -29,11 +44,22 @@ class AlgebraLatex {
    * @return string The serialized string
    */
   toMath() {
-    if (typeof this.formattedMath === 'undefined') {
-      this.formattedMath = new MathFormatter(this.getAst()).format()
-    }
+    return new MathFormatter(this.getAst()).format()
+  }
 
-    return this.formattedMath
+  /**
+   * Will return a formatted latex string eg. \frac{1}{\sqrt{2}}
+   * @return string The formatted latex string
+   */
+  toLatex() {
+    return new LatexFormatter(this.getAst()).format()
+  }
+
+  /**
+   * @deprecated toLatex() should be used instead
+   */
+  toTex() {
+    return self.toLatex()
   }
 
   /**
@@ -96,7 +122,7 @@ class AlgebraLatex {
    * @return Boolean true if expression
    */
   isEquation() {
-    return this.texInput.includes('=')
+    return this.input.includes('=')
   }
 }
 

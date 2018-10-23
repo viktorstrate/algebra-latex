@@ -24,6 +24,14 @@ describe('API tests', () => {
     assert.equal(mathExpression, 'x*3/9')
   })
 
+  it('format latex equation', () => {
+    assert.equal(algebraEquation.toLatex(), 'x+\\frac{2}{3}-4=8')
+  })
+
+  it('format latex expression', () => {
+    assert.equal(algebraExpression.toLatex(), 'x\\cdot \\frac{3}{9}')
+  })
+
   describe('algebra.js', () => {
     const algebraJSEquation = algebraEquation.toAlgebra(algebraJS)
     const algebraJSExpression = algebraExpression.toAlgebra(algebraJS)

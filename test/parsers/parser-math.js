@@ -94,4 +94,29 @@ describe('math parser', () => {
       },
     })
   })
+
+  it('parse fractions without helper parenthesis', () => {
+    const math = '1/2*3'
+
+    assert.deepEqual(parser(math), {
+      type: 'operator',
+      operator: 'multiply',
+      lhs: {
+        type: 'operator',
+        operator: 'divide',
+        lhs: {
+          type: 'number',
+          value: 1,
+        },
+        rhs: {
+          type: 'number',
+          value: 2,
+        },
+      },
+      rhs: {
+        type: 'number',
+        value: 3,
+      },
+    })
+  })
 })
