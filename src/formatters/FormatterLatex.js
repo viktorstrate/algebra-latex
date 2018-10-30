@@ -1,3 +1,5 @@
+import greekLetters from '../models/greek-letters'
+
 export default class LatexFormatter {
   constructor(ast) {
     this.ast = ast
@@ -71,7 +73,12 @@ export default class LatexFormatter {
     let rhsParen = shouldHaveParenthesis(root.rhs)
 
     lhs = lhsParen ? `\\left(${lhs}\\right)` : lhs
-    rhs = rhsParen ? `\\left(${rhs}\\right)` : rhs
+
+    if (root.operator == 'exponent') {
+      rhs = rhsParen ? `{${rhs}}` : rhs
+    } else {
+      rhs = rhsParen ? `\\left(${rhs}\\right)` : rhs
+    }
 
     return `${lhs}${op}${rhs}`
   }
@@ -88,10 +95,16 @@ export default class LatexFormatter {
   }
 
   function(root) {
+    if (root.value == 'sqrt') {
+      return `\\${root.value}{${this.format(root.content)}}`
+    }
     return `\\${root.value}\\left(${this.format(root.content)}\\right)`
   }
 
   variable(root) {
+    if (greekLetters.map(l => l.name).includes(root.value.toLowerCase())) {
+      return `\\${root.value}`
+    }
     return `${root.value}`
   }
 

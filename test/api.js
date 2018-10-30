@@ -39,7 +39,7 @@ describe('API tests', () => {
 
   it('chain functions', () => {
     const result = new AlgebraLatex().parseMath('1/sqrt(2)').toLatex()
-    assert.equal(result, '\\frac{1}{\\sqrt\\left(2\\right)}')
+    assert.equal(result, '\\frac{1}{\\sqrt{2}}')
   })
 
   describe('algebra.js', () => {

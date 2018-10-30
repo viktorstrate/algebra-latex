@@ -101,6 +101,11 @@ export default class LatexLexer extends Lexer {
       return { type: 'equal' }
     }
 
+    if (this.current_char() == '_') {
+      this.increment()
+      return { type: 'underscore' }
+    }
+
     this.error('Unknown symbol: ' + this.current_char())
   }
 

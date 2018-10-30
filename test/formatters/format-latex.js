@@ -1,13 +1,13 @@
-import MathFormatter from '../../src/formatters/FormatterMath.js'
+import LatexFormatter from '../../src/formatters/FormatterLatex'
 import assert from 'assert'
 
-describe('formatter math', () => {
+describe('formatter latex', () => {
   let format = ast => {
-    let formatter = new MathFormatter(ast)
+    let formatter = new LatexFormatter(ast)
     return formatter.format()
   }
 
-  it('format a general latex example', () => {
+  it('format a general math example', () => {
     const ast = {
       type: 'operator',
       operator: 'multiply',
@@ -37,7 +37,7 @@ describe('formatter math', () => {
       },
     }
 
-    assert.equal(format(ast), '(2+3)*5/1')
+    assert.equal(format(ast), '\\left(2+3\\right)\\cdot \\frac{5}{1}')
   })
 
   it('format division', () => {
@@ -62,7 +62,7 @@ describe('formatter math', () => {
       },
     }
 
-    assert.equal(format(ast), '1/(3*4)')
+    assert.equal(format(ast), '\\frac{1}{3\\cdot 4}')
   })
 
   describe('exponents', () => {
@@ -104,7 +104,7 @@ describe('formatter math', () => {
         },
       }
 
-      assert.equal(format(ast), '3^(6+4)-var^2')
+      assert.equal(format(ast), '3^{6+4}-var^2')
     })
 
     it('parse nested exponents', () => {
@@ -137,7 +137,7 @@ describe('formatter math', () => {
         },
       }
 
-      assert.equal(format(ast), '3^5^(22-3)')
+      assert.equal(format(ast), '3^5^{22-3}')
     })
   })
 
@@ -155,7 +155,7 @@ describe('formatter math', () => {
       },
     }
 
-    assert.equal(format(parsedLatex), 'var*var')
+    assert.equal(format(parsedLatex), 'var\\cdot var')
   })
 
   describe('functions', () => {
@@ -169,7 +169,7 @@ describe('formatter math', () => {
         },
       }
 
-      assert.equal(format(parsedLatex), 'sqrt(123)', 'sqrt example')
+      assert.equal(format(parsedLatex), '\\sqrt{123}', 'sqrt example')
     })
   })
 
@@ -211,7 +211,7 @@ describe('formatter math', () => {
         },
       }
 
-      assert.equal(format(parsedLatex), 'y=a*x+2*b')
+      assert.equal(format(parsedLatex), 'y=a\\cdot x+2\\cdot b')
     })
   })
 
@@ -230,7 +230,7 @@ describe('formatter math', () => {
         },
       }
 
-      assert.equal(format(parsedLatex), 'α*β')
+      assert.equal(format(parsedLatex), '\\alpha\\cdot \\beta')
     })
 
     it('should format upper case', () => {
@@ -247,7 +247,7 @@ describe('formatter math', () => {
         },
       }
 
-      assert.equal(format(parsedLatex), 'Α*Δ')
+      assert.equal(format(parsedLatex), '\\Alpha\\cdot \\Delta')
     })
   })
 })
