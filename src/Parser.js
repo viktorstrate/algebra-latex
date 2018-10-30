@@ -360,9 +360,16 @@ export default class ParserLatex {
   variable() {
     this.eat('variable')
 
+    let value = this.current_token.value
+    let subscript = ''
+    if (this.peek().type == 'underscore') {
+      this.eat('underscore')
+      subscript = '_' + this.variable().value
+    }
+
     return {
       type: 'variable',
-      value: this.current_token.value,
+      value: value + subscript,
     }
   }
 

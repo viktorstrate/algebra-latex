@@ -249,102 +249,6 @@ describe('latex parser', () => {
     })
   })
 
-  describe('multiple character variables', () => {
-    it('parse multiple character variables', () => {
-      const latex = 'var+a var'
-
-      assert.deepEqual(parser(latex), {
-        type: 'operator',
-        operator: 'plus',
-        lhs: {
-          type: 'variable',
-          value: 'var',
-        },
-        rhs: {
-          type: 'operator',
-          operator: 'multiply',
-          lhs: {
-            type: 'variable',
-            value: 'a',
-          },
-          rhs: {
-            type: 'variable',
-            value: 'var',
-          },
-        },
-      })
-    })
-
-    it('parse variables with spaces in between', () => {
-      const latex = 'a \\ \\qquad b'
-
-      assert.deepEqual(parser(latex), {
-        type: 'operator',
-        operator: 'multiply',
-        lhs: {
-          type: 'variable',
-          value: 'a',
-        },
-        rhs: {
-          type: 'variable',
-          value: 'b',
-        },
-      })
-    })
-  })
-
-  describe('greek letters', () => {
-    it('should parse lower case', () => {
-      const latex = '\\alpha\\delta\\gamma'
-
-      assert.deepEqual(parser(latex), {
-        type: 'operator',
-        operator: 'multiply',
-        lhs: {
-          type: 'variable',
-          value: 'alpha',
-        },
-        rhs: {
-          type: 'operator',
-          operator: 'multiply',
-          lhs: {
-            type: 'variable',
-            value: 'delta',
-          },
-          rhs: {
-            type: 'variable',
-            value: 'gamma',
-          },
-        },
-      })
-    })
-
-    it('parse upper case', () => {
-      const latex = '\\Alpha\\Delta\\Gamma'
-
-      assert.deepEqual(parser(latex), {
-        type: 'operator',
-        operator: 'multiply',
-        lhs: {
-          type: 'variable',
-          value: 'Alpha',
-        },
-        rhs: {
-          type: 'operator',
-          operator: 'multiply',
-          lhs: {
-            type: 'variable',
-            value: 'Delta',
-          },
-          rhs: {
-            type: 'variable',
-            value: 'Gamma',
-          },
-        },
-      })
-    })
-  })
-
   it('parse modulus', () => {
     const latex = '3\\mod5'
 
@@ -359,6 +263,121 @@ describe('latex parser', () => {
         type: 'number',
         value: 5,
       },
+    })
+  })
+
+  describe('variables', () => {
+    it('parse variables with underscores', () => {
+      const latex = 't_last-t_first_a'
+
+      assert.deepEqual(parser(latex), {
+        type: 'operator',
+        operator: 'minus',
+        lhs: {
+          type: 'variable',
+          value: 't_last',
+        },
+        rhs: {
+          type: 'variable',
+          value: 't_first_a',
+        },
+      })
+    })
+
+    describe('multiple character variables', () => {
+      it('parse multiple character variables', () => {
+        const latex = 'var+a var'
+
+        assert.deepEqual(parser(latex), {
+          type: 'operator',
+          operator: 'plus',
+          lhs: {
+            type: 'variable',
+            value: 'var',
+          },
+          rhs: {
+            type: 'operator',
+            operator: 'multiply',
+            lhs: {
+              type: 'variable',
+              value: 'a',
+            },
+            rhs: {
+              type: 'variable',
+              value: 'var',
+            },
+          },
+        })
+      })
+
+      it('parse variables with spaces in between', () => {
+        const latex = 'a \\ \\qquad b'
+
+        assert.deepEqual(parser(latex), {
+          type: 'operator',
+          operator: 'multiply',
+          lhs: {
+            type: 'variable',
+            value: 'a',
+          },
+          rhs: {
+            type: 'variable',
+            value: 'b',
+          },
+        })
+      })
+    })
+
+    describe('greek letters', () => {
+      it('should parse lower case', () => {
+        const latex = '\\alpha\\delta\\gamma'
+
+        assert.deepEqual(parser(latex), {
+          type: 'operator',
+          operator: 'multiply',
+          lhs: {
+            type: 'variable',
+            value: 'alpha',
+          },
+          rhs: {
+            type: 'operator',
+            operator: 'multiply',
+            lhs: {
+              type: 'variable',
+              value: 'delta',
+            },
+            rhs: {
+              type: 'variable',
+              value: 'gamma',
+            },
+          },
+        })
+      })
+
+      it('parse upper case', () => {
+        const latex = '\\Alpha\\Delta\\Gamma'
+
+        assert.deepEqual(parser(latex), {
+          type: 'operator',
+          operator: 'multiply',
+          lhs: {
+            type: 'variable',
+            value: 'Alpha',
+          },
+          rhs: {
+            type: 'operator',
+            operator: 'multiply',
+            lhs: {
+              type: 'variable',
+              value: 'Delta',
+            },
+            rhs: {
+              type: 'variable',
+              value: 'Gamma',
+            },
+          },
+        })
+      })
     })
   })
 

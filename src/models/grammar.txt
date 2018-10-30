@@ -21,7 +21,7 @@ number : NUMBER
        | symbol
        | group
 
-variable : VARIABLE
+variable : VARIABLE ( UNDERSCORE variable)?
 
 symbol : ( ALPHA | BETA | GAMMA | DELTA ... )
 
