@@ -4,6 +4,10 @@ export default class LatexFormatter {
   }
 
   format(root = this.ast) {
+    if (root == null) {
+      return ''
+    }
+
     switch (root.type) {
       case 'operator':
         return this.operator(root)

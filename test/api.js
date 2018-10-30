@@ -20,6 +20,11 @@ describe('API tests', () => {
     assert.equal(mathEquation, 'x+2/3-4=8')
   })
 
+  it('parse empty input', () => {
+    assert.equal(new AlgebraLatex().parseLatex('').toMath(), '')
+    assert.equal(new AlgebraLatex().parseMath('').toLatex(), '')
+  })
+
   it('should parse math expression', () => {
     assert.equal(mathExpression, 'x*3/9')
   })
@@ -89,6 +94,17 @@ describe('API tests', () => {
 
     it('should solve expression', () => {
       assert.equal(coffeequateExpression.toString(), 'x/3')
+    })
+
+    it('solve exponent', () => {
+      const latex = '3^{3}+4^2'
+
+      const result = new AlgebraLatex()
+        .parseLatex(latex)
+        .toCoffeequate(coffeequate)
+        .toString()
+
+      assert.equal(result, '43')
     })
   })
 })

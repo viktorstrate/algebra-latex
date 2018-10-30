@@ -116,7 +116,7 @@ class AlgebraLatex {
     }
 
     let result = this.toMath()
-    result = result.replace('^', '**')
+    result = result.replace(/\^/g, '**')
 
     return coffeequate(result)
   }
