@@ -17,12 +17,12 @@
   "license": "MIT",
   "devDependencies": {
     "algebra.js": "^0.2.6",
-    "algebrite": "^1.0.2",
+    "algebrite": "^1.2.0",
     "babel-cli": "^6.22.2",
-    "babel-preset-env": "^1.1.8",
+    "babel-preset-env": "^1.7.0",
     "coffeequate": "^1.3.0",
-    "eslint-plugin-import": "^2.8.0",
-    "mocha": "^4.0.1",
+    "eslint-plugin-import": "^2.14.0",
+    "mocha": "^5.2.0",
     "prettier": "^1.14.3"
   }
 }

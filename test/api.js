@@ -67,7 +67,7 @@ describe('API tests', () => {
     const algebriteEquation = algebraEquation.toAlgebrite(algebrite)
 
     it('should solve expression', () => {
-      assert.equal(algebriteExpression.toString(), '1/3 x')
+      assert.equal(algebriteExpression.toString(), '1/3*x')
     })
 
     it('should fail to parse equation', () => {
@@ -80,7 +80,7 @@ describe('API tests', () => {
       const latex = '\\alpha + \\alpha - \\Delta'
       const obj = new AlgebraLatex(latex)
 
-      assert.equal(obj.toAlgebrite(algebrite).toString(), '-Delta + 2 alpha')
+      assert.equal(obj.toAlgebrite(algebrite).toString(), '-Delta+2*alpha')
     })
   })
 
