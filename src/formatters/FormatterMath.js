@@ -22,6 +22,8 @@ export default class MathFormatter {
         return this.variable(root)
       case 'equation':
         return this.equation(root)
+      case 'subscript':
+        return this.subscript(root)
       default:
         throw Error('Unexpected type: ' + root.type)
     }
@@ -103,5 +105,13 @@ export default class MathFormatter {
 
   equation(root) {
     return `${this.format(root.lhs)}=${this.format(root.rhs)}`
+  }
+
+  subscript(root) {
+    if (root.subscript.type == 'variable' && root.subscript.value.length == 1) {
+      return `${this.format(root.base)}_${this.format(root.subscript)}`
+    }
+
+    return `${this.format(root.base)}_(${this.format(root.subscript)})`
   }
 }

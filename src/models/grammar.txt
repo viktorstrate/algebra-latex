@@ -1,29 +1,28 @@
-start : equation EOF
+start    : equation EOF
 
 equation : expr EQUAL expr
 
-expr : operator
+expr     : operator
 
-group : LBRACKET expr RBRACKET
+group    : LBRACKET expr RBRACKET
 
-operator : operator_term ((PLUS | MINUS) operator)?
+operator      : operator_term ((PLUS | MINUS) operator)?
 
 operator_term : operator_mod ( ((MULTIPLY | DIVIDE) operator_term) | number )?
 
-operator_mod : operator_exp ( MODULUS operator_mod )?
+operator_mod  : operator_exp ( MODULUS operator_mod )?
 
-operator_exp : number ( EXPONENT expr )?
+operator_exp  : subscript ( EXPONENT expr )?
+
+subscript       : number ( UNDERSCORE subscript )?
 
 number : NUMBER
        | UNI_OP
        | variable
        | keyword
-       | symbol
        | group
 
-variable : VARIABLE ( UNDERSCORE variable)?
-
-symbol : ( ALPHA | BETA | GAMMA | DELTA ... )
+variable : VARIABLE
 
 keyword : KEYWORD
         | fraction

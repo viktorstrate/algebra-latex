@@ -250,4 +250,42 @@ describe('formatter math', () => {
       assert.equal(format(parsedLatex), 'Α*Δ')
     })
   })
+
+  it('format variables with subscripts', () => {
+    const parsedLatex = {
+      type: 'operator',
+      operator: 'minus',
+      lhs: {
+        type: 'subscript',
+        base: {
+          type: 'variable',
+          value: 't',
+        },
+        subscript: {
+          type: 'variable',
+          value: 'last',
+        },
+      },
+      rhs: {
+        type: 'subscript',
+        base: {
+          type: 'variable',
+          value: 't',
+        },
+        subscript: {
+          type: 'subscript',
+          base: {
+            type: 'variable',
+            value: 'first',
+          },
+          subscript: {
+            type: 'variable',
+            value: 'a',
+          },
+        },
+      },
+    }
+
+    assert.equal(format(parsedLatex), 't_(last)-t_(first_a)')
+  })
 })

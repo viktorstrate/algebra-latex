@@ -268,18 +268,39 @@ describe('latex parser', () => {
 
   describe('variables', () => {
     it('parse variables with underscores', () => {
-      const latex = 't_last-t_first_a'
+      const latex = 't_{last}-t_{first_a}'
 
       assert.deepEqual(parser(latex), {
         type: 'operator',
         operator: 'minus',
         lhs: {
-          type: 'variable',
-          value: 't_last',
+          type: 'subscript',
+          base: {
+            type: 'variable',
+            value: 't',
+          },
+          subscript: {
+            type: 'variable',
+            value: 'last',
+          },
         },
         rhs: {
-          type: 'variable',
-          value: 't_first_a',
+          type: 'subscript',
+          base: {
+            type: 'variable',
+            value: 't',
+          },
+          subscript: {
+            type: 'subscript',
+            base: {
+              type: 'variable',
+              value: 'first',
+            },
+            subscript: {
+              type: 'variable',
+              value: 'a',
+            },
+          },
         },
       })
     })
