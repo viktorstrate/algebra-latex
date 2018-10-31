@@ -8,3 +8,5 @@ test/
 yarn.lock
 yarn-error.log
 .yarnclean
+.idea
+.prettierrc
