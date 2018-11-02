@@ -139,6 +139,23 @@ describe('formatter math', () => {
 
       assert.equal(format(ast), '3^5^(22-3)')
     })
+
+    it('format exponents of negative numbers with curley braces', () => {
+      const ast = {
+        type: 'operator',
+        operator: 'exponent',
+        lhs: {
+          type: 'number',
+          value: 3,
+        },
+        rhs: {
+          type: 'number',
+          value: -1,
+        },
+      }
+
+      assert.equal(format(ast), '3^(-1)')
+    })
   })
 
   it('should format latex with spaces correctly', () => {

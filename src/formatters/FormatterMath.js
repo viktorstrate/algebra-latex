@@ -79,6 +79,12 @@ export default class MathFormatter {
     // Special case for division
     rhsParen = rhsParen || (op == '/' && root.rhs.type == 'operator')
 
+    if (root.operator == 'exponent') {
+      if (root.rhs.type == 'number' && root.rhs.value < 0) {
+        rhsParen = true
+      }
+    }
+
     lhs = lhsParen ? `(${lhs})` : lhs
     rhs = rhsParen ? `(${rhs})` : rhs
 
