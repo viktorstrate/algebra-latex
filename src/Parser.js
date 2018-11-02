@@ -386,7 +386,6 @@ export default class ParserLatex {
 
   number() {
     // number : NUMBER
-    //        | UNI_OP
     //        | variable
     //        | keyword
     //        | symbol
