@@ -104,7 +104,7 @@ describe('formatter latex', () => {
         },
       }
 
-      assert.equal(format(ast), '3^{6+4}-var^2')
+      assert.equal(format(ast), '3^{6+4}-var^{2}')
     })
 
     it('format nested exponents', () => {
@@ -137,7 +137,7 @@ describe('formatter latex', () => {
         },
       }
 
-      assert.equal(format(ast), '3^5^{22-3}')
+      assert.equal(format(ast), '3^{5^{22-3}}')
     })
   })
 
