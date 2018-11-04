@@ -188,6 +188,23 @@ describe('formatter latex', () => {
 
       assert.equal(format(parsedLatex), '\\sqrt{123}', 'sqrt example')
     })
+
+    it('format negated function', () => {
+      const parsedLatex = {
+        type: 'uni-operator',
+        operator: 'minus',
+        value: {
+          type: 'function',
+          value: 'sin',
+          content: {
+            type: 'number',
+            value: '90',
+          },
+        },
+      }
+
+      assert.equal(format(parsedLatex), '-\\sin\\left(90\\right)')
+    })
   })
 
   describe('equations', () => {

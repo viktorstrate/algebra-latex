@@ -23,6 +23,8 @@ export default class LatexFormatter {
         return this.equation(root)
       case 'subscript':
         return this.subscript(root)
+      case 'uni-operator':
+        return this.uni_operator(root)
       default:
         throw Error('Unexpected type: ' + root.type)
     }
@@ -121,5 +123,13 @@ export default class LatexFormatter {
     }
 
     return `${this.format(root.base)}_{${this.format(root.subscript)}}`
+  }
+
+  uni_operator(root) {
+    if (root.operator == 'minus') {
+      return `-${this.format(root.value)}`
+    }
+
+    return this.format(root.value)
   }
 }

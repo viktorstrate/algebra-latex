@@ -17,7 +17,7 @@ operator_exp  : subscript ( EXPONENT expr )?
 subscript       : number ( UNDERSCORE subscript )?
 
 number : NUMBER
-       | UNI_OP
+       | uni_operator
        | variable
        | keyword
        | group

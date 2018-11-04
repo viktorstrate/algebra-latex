@@ -468,6 +468,23 @@ describe('latex parser', () => {
         },
       })
     })
+
+    it('parse negated function "-sin(x)"', () => {
+      const latex = '-\\sin\\left( x \\right)'
+
+      assert.deepEqual(parser(latex), {
+        type: 'uni-operator',
+        operator: 'minus',
+        value: {
+          type: 'function',
+          value: 'sin',
+          content: {
+            type: 'variable',
+            value: 'x',
+          },
+        },
+      })
+    })
   })
 
   describe('equations', () => {

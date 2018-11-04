@@ -386,6 +386,7 @@ export default class ParserLatex {
 
   number() {
     // number : NUMBER
+    //        | uni_operator
     //        | variable
     //        | keyword
     //        | symbol
@@ -404,19 +405,7 @@ export default class ParserLatex {
     }
 
     if (this.peek_token.type == 'operator') {
-      this.next_token()
-      if (
-        this.current_token.value == 'plus' ||
-        this.current_token.value == 'minus'
-      ) {
-        let prefix = this.current_token.value
-        let number = this.number()
-
-        return {
-          type: 'number',
-          value: prefix == 'minus' ? -number.value : number.value,
-        }
-      }
+      return this.uni_operator()
     }
 
     if (this.peek_token.type == 'variable') {
@@ -436,5 +425,29 @@ export default class ParserLatex {
       'Expected number, variable, function, group, or + - found ' +
         JSON.stringify(this.current_token)
     )
+  }
+
+  uni_operator() {
+    this.eat('operator')
+    if (
+      this.current_token.value == 'plus' ||
+      this.current_token.value == 'minus'
+    ) {
+      let prefix = this.current_token.value
+      let value = this.number()
+
+      if (value.type == 'number') {
+        return {
+          type: 'number',
+          value: prefix == 'minus' ? -value.value : value.value,
+        }
+      }
+
+      return {
+        type: 'uni-operator',
+        operator: prefix,
+        value,
+      }
+    }
   }
 }

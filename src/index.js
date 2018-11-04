@@ -24,6 +24,9 @@ class AlgebraLatex {
   }
 
   parseLatex(latex) {
+    // Replace , with . for european decimal separators
+    latex = latex.replace(/,/g, '.')
+
     this.input = latex
     this.parser = new Parser(latex, LatexLexer)
     this.parser.parse()
@@ -32,6 +35,9 @@ class AlgebraLatex {
   }
 
   parseMath(math) {
+    // Replace , with . for european decimal separators
+    math = math.replace(/,/g, '.')
+
     this.input = math
     this.parser = new Parser(math, MathLexer)
     this.parser.parse()
