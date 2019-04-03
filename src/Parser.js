@@ -242,19 +242,40 @@ export default class ParserLatex {
   }
 
   operator_multiply() {
-    // operator_multiply : operator_divide ( (MULTIPLY operator_multiply) | number )?
+    // operator_multiply : (operator_divide | GROUP) ( (MULTIPLY operator_multiply) | number )?
 
     debug('op mul left')
 
-    let lhs = this.operator_divide()
+    let lhs
+
+    if (this.peek().type == 'bracket') {
+      lhs = this.group()
+    } else {
+      lhs = this.operator_divide()
+    }
+
     let op = this.peek()
 
-    if (op.type == 'number' || op.type == 'variable' || op.type == 'keyword') {
+    if (
+      op.type == 'number' ||
+      op.type == 'variable' ||
+      op.type == 'keyword' ||
+      (op.type == 'bracket' && op.value == '(')
+    ) {
       op = {
         type: 'operator',
         value: 'multiply',
       }
-    } else if (
+    } /* else if (op.type == 'bracket' && op.open == true) {
+      let rhs = this.group()
+
+      return {
+        type: 'operator',
+        operator: 'multiply',
+        lhs,
+        rhs,
+      }
+    }*/ else if (
       op.type != 'operator' ||
       (op.value != 'multiply' && op.value != 'divide')
     ) {

@@ -65,6 +65,47 @@ describe('formatter math', () => {
     assert.equal(format(ast), '1/(3*4)')
   })
 
+  describe('format parenthesis nesting', () => {
+    const ast = {
+      lhs: {
+        type: 'number',
+        value: 6,
+      },
+      operator: 'multiply',
+      rhs: {
+        lhs: {
+          lhs: {
+            type: 'number',
+            value: 5,
+          },
+          operator: 'plus',
+          rhs: {
+            lhs: {
+              type: 'number',
+              value: 2,
+            },
+            operator: 'multiply',
+            rhs: {
+              type: 'number',
+              value: 6,
+            },
+            type: 'operator',
+          },
+          type: 'operator',
+        },
+        operator: 'multiply',
+        rhs: {
+          type: 'number',
+          value: 8,
+        },
+        type: 'operator',
+      },
+      type: 'operator',
+    }
+
+    assert.equal(format(ast), '6*(5+2*6)*8')
+  })
+
   describe('exponents', () => {
     it('parse expression with exponents', () => {
       const ast = {

@@ -184,6 +184,47 @@ describe('latex parser', () => {
     })
   })
 
+  it('parse implicit parenthesis multiplication', () => {
+    const latex = '6\\left(5+\\left(2\\right)\\left(6\\right)\\right)8'
+
+    assert.deepEqual(parser(latex), {
+      lhs: {
+        type: 'number',
+        value: 6,
+      },
+      operator: 'multiply',
+      rhs: {
+        lhs: {
+          lhs: {
+            type: 'number',
+            value: 5,
+          },
+          operator: 'plus',
+          rhs: {
+            lhs: {
+              type: 'number',
+              value: 2,
+            },
+            operator: 'multiply',
+            rhs: {
+              type: 'number',
+              value: 6,
+            },
+            type: 'operator',
+          },
+          type: 'operator',
+        },
+        operator: 'multiply',
+        rhs: {
+          type: 'number',
+          value: 8,
+        },
+        type: 'operator',
+      },
+      type: 'operator',
+    })
+  })
+
   it('parse exponent examples', () => {
     const latex = '3^2*a^{2*4}*b^(2)3'
 
