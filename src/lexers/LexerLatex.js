@@ -71,6 +71,16 @@ export default class LatexLexer extends Lexer {
       return { type: 'bracket', open: false, value: ')' }
     }
 
+    if (this.current_char() == '[') {
+      this.increment()
+      return { type: 'bracket', open: true, value: '[' }
+    }
+
+    if (this.current_char() == ']') {
+      this.increment()
+      return { type: 'bracket', open: false, value: ']' }
+    }
+
     if (this.current_char() == '+') {
       this.increment()
       return { type: 'operator', value: 'plus' }

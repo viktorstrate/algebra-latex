@@ -137,6 +137,10 @@ export default class ParserLatex {
       return this.fraction()
     }
 
+    if (kwd == 'sqrt') {
+      return this.sqrt()
+    }
+
     if (functions.includes(kwd.toLowerCase())) {
       return this.function()
     }
@@ -145,6 +149,60 @@ export default class ParserLatex {
     return {
       type: 'keyword',
       value: this.current_token.value,
+    }
+  }
+
+  sqrt() {
+    // sqrt : SQRT (L_SQUARE_BRAC NUMBER R_SQUARE_BRAC)? GROUP
+    debug('sqrt')
+
+    this.eat('keyword')
+
+    if (this.current_token.value != 'sqrt') {
+      this.error('Expected sqrt found ' + JSON.stringify(this.current_token))
+    }
+
+    if (this.peek().value != '[') {
+      let content = this.group()
+
+      return {
+        type: 'function',
+        value: 'sqrt',
+        content,
+      }
+    }
+
+    this.eat('bracket')
+    if (this.current_token.value != '[') {
+      this.error(
+        'Expected "[" bracket, found ' + JSON.stringify(this.current_token)
+      )
+    }
+
+    let base = this.number()
+
+    this.eat('bracket')
+    if (this.current_token.value != ']') {
+      this.error(
+        'Expected "]" bracket, found ' + JSON.stringify(this.current_token)
+      )
+    }
+
+    let value = this.group()
+
+    return {
+      type: 'operator',
+      operator: 'exponent',
+      lhs: value,
+      rhs: {
+        type: 'operator',
+        operator: 'divide',
+        lhs: {
+          type: 'number',
+          value: 1,
+        },
+        rhs: base,
+      },
     }
   }
 
@@ -266,16 +324,7 @@ export default class ParserLatex {
         type: 'operator',
         value: 'multiply',
       }
-    } /* else if (op.type == 'bracket' && op.open == true) {
-      let rhs = this.group()
-
-      return {
-        type: 'operator',
-        operator: 'multiply',
-        lhs,
-        rhs,
-      }
-    }*/ else if (
+    } else if (
       op.type != 'operator' ||
       (op.value != 'multiply' && op.value != 'divide')
     ) {

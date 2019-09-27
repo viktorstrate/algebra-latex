@@ -143,6 +143,47 @@ describe('latex lexer', () => {
     assert.deepEqual(parse(latex), expected)
   })
 
+  it('parse roots', () => {
+    const latex = '\\sqrt[3]{2}'
+
+    const expected = [
+      {
+        type: 'keyword',
+        value: 'sqrt',
+      },
+      {
+        type: 'bracket',
+        value: '[',
+        open: true,
+      },
+      {
+        type: 'number',
+        value: 3,
+      },
+      {
+        type: 'bracket',
+        value: ']',
+        open: false,
+      },
+      {
+        type: 'bracket',
+        value: '{',
+        open: true,
+      },
+      {
+        type: 'number',
+        value: 2,
+      },
+      {
+        type: 'bracket',
+        value: '}',
+        open: false,
+      },
+    ]
+
+    assert.deepEqual(parse(latex), expected)
+  })
+
   describe('error handling', () => {
     it('handle bracket error correctly', () => {
       const latex = '\\left\n { \\right\\Alpha'

@@ -290,6 +290,31 @@ describe('latex parser', () => {
     })
   })
 
+  it('parse cubic root', () => {
+    const latex = '\\sqrt[3]{2}'
+
+    assert.deepEqual(parser(latex), {
+      type: 'operator',
+      operator: 'exponent',
+      lhs: {
+        type: 'number',
+        value: 2,
+      },
+      rhs: {
+        type: 'operator',
+        operator: 'divide',
+        lhs: {
+          type: 'number',
+          value: 1,
+        },
+        rhs: {
+          type: 'number',
+          value: 3,
+        },
+      },
+    })
+  })
+
   it('parse modulus', () => {
     const latex = '3\\mod5'
 
