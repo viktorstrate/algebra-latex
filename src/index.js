@@ -12,6 +12,7 @@ import MathLexer from './lexers/LexerMath'
 class AlgebraLatex {
   /**
    * Create an AlgebraLatex object, to be converted
+   * The latex paremeter was removed as of v2.0, use parseLatex()
    * @param options the options to provide to the library
    * @return {AlgebraLatex} object to be converted
    */
