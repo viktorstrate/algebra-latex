@@ -8,10 +8,10 @@ import AlgebraLatex from '../src/index'
 
 describe('API tests', () => {
   const latexEquation = 'x+\\frac{2}{3}-4=8'
-  const algebraEquation = new AlgebraLatex(latexEquation)
+  const algebraEquation = new AlgebraLatex().parseLatex(latexEquation)
 
   const latexExpression = 'x\\cdot\\frac{3}{9}'
-  const algebraExpression = new AlgebraLatex(latexExpression)
+  const algebraExpression = new AlgebraLatex().parseLatex(latexExpression)
 
   const mathEquation = algebraEquation.toMath()
   const mathExpression = algebraExpression.toMath()
@@ -56,7 +56,7 @@ describe('API tests', () => {
 
     it('should parse greek letters correctly', () => {
       const latex = '\\alpha + \\alpha - \\Delta'
-      const obj = new AlgebraLatex(latex)
+      const obj = new AlgebraLatex().parseLatex(latex)
 
       assert.equal(obj.toAlgebra(algebraJS).toTex(), '2\\alpha - \\Delta')
     })
@@ -78,7 +78,7 @@ describe('API tests', () => {
 
     it('should parse greek letters correctly', () => {
       const latex = '\\alpha + \\alpha - \\Delta'
-      const obj = new AlgebraLatex(latex)
+      const obj = new AlgebraLatex().parseLatex(latex)
 
       assert.equal(obj.toAlgebrite(algebrite).toString(), '-Delta+2*alpha')
     })

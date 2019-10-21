@@ -13,7 +13,7 @@ function main() {
     }
 
     const latexInput = args[3]
-    const algebraLatex = new AlgebraLatex(latexInput)
+    const algebraLatex = new AlgebraLatex().parseLatex(latexInput)
 
     return printResult(algebraLatex)
   }

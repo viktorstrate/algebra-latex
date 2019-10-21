@@ -12,15 +12,12 @@ import MathLexer from './lexers/LexerMath'
 class AlgebraLatex {
   /**
    * Create an AlgebraLatex object, to be converted
-   * @deprecated @param  {String} latex Optional, if defined it will automatically parse the input as latex
+   * The latex paremeter was removed as of v2.0, use parseLatex()
+   * @param options the options to provide to the library
    * @return {AlgebraLatex} object to be converted
    */
-  constructor(latex) {
-    if (typeof latex == 'undefined') {
-      return
-    }
-
-    this.parseLatex(latex)
+  constructor(options = {}) {
+    this.options = options
   }
 
   parseLatex(latex) {
@@ -28,7 +25,7 @@ class AlgebraLatex {
     latex = latex.replace(/,/g, '.')
 
     this.input = latex
-    this.parser = new Parser(latex, LatexLexer)
+    this.parser = new Parser(latex, LatexLexer, this.options)
     this.parser.parse()
 
     return this
@@ -39,7 +36,7 @@ class AlgebraLatex {
     math = math.replace(/,/g, '.')
 
     this.input = math
-    this.parser = new Parser(math, MathLexer)
+    this.parser = new Parser(math, MathLexer, this.options)
     this.parser.parse()
 
     return this

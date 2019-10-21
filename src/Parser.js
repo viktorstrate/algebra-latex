@@ -4,15 +4,17 @@ import greekLetters from './models/greek-letters'
 import { debug } from './logger'
 
 export default class ParserLatex {
-  constructor(latex, Lexer) {
+  constructor(latex, Lexer, options = {}) {
     // if (!(Lexer instanceof LexerClass)) {
     //   throw Error('Please parse a valid lexer as second argument')
     // }
 
     this.lexer = new Lexer(latex)
+    this.options = options
     this.ast = null
     this.current_token = null
     this.peek_token = null
+    this.functions = functions.concat(options.functions || [])
   }
 
   parse() {
@@ -141,7 +143,7 @@ export default class ParserLatex {
       return this.sqrt()
     }
 
-    if (functions.includes(kwd.toLowerCase())) {
+    if (this.functions.includes(kwd.toLowerCase())) {
       return this.function()
     }
 
