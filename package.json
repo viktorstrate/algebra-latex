@@ -14,7 +14,7 @@
   "bin": {
     "algebra-latex": "lib/cli.js"
   },
-  "repository": "https://github.com/viktorstrate/latex-mathify.git",
+  "repository": "https://github.com/viktorstrate/algebra-latex.git",
   "author": "viktorstrate <viktorstrate@gmail.com>",
   "license": "MIT",
   "devDependencies": {
