@@ -18,7 +18,7 @@ describe('math lexer', () => {
 
   it('parse simple math expression', () => {
     const math = 'sqrt((1* 2  + 3) / (Delta t) - 3 ) * 54/399'
-    assert.deepEqual(parse(math), [
+    assert.deepStrictEqual(parse(math), [
       {
         type: 'keyword',
         value: 'sqrt',

@@ -11,7 +11,7 @@ describe('math parser', () => {
   it('parse simple expression', () => {
     const math = '1/2 + sqrt(2)* 4'
 
-    assert.deepEqual(parser(math), {
+    assert.deepStrictEqual(parser(math), {
       type: 'operator',
       operator: 'plus',
       lhs: {
@@ -48,7 +48,7 @@ describe('math parser', () => {
   it('parse expressions with parenthesis', () => {
     const math = '1/(2+4 ) '
 
-    assert.deepEqual(parser(math), {
+    assert.deepStrictEqual(parser(math), {
       type: 'operator',
       operator: 'divide',
       lhs: {
@@ -73,7 +73,7 @@ describe('math parser', () => {
   it('parse expressions with exponents', () => {
     const math = 'e^(-3*4)'
 
-    assert.deepEqual(parser(math), {
+    assert.deepStrictEqual(parser(math), {
       type: 'operator',
       operator: 'exponent',
       lhs: {
@@ -98,7 +98,7 @@ describe('math parser', () => {
   it('parse fractions without helper parenthesis', () => {
     const math = '1/2*3'
 
-    assert.deepEqual(parser(math), {
+    assert.deepStrictEqual(parser(math), {
       type: 'operator',
       operator: 'multiply',
       lhs: {

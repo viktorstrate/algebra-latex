@@ -112,7 +112,7 @@ describe('latex lexer', () => {
       },
     ]
 
-    assert.deepEqual(parse(latex), expected)
+    assert.deepStrictEqual(parse(latex), expected)
   })
 
   it('parse operators', () => {
@@ -140,7 +140,7 @@ describe('latex lexer', () => {
       },
     ]
 
-    assert.deepEqual(parse(latex), expected)
+    assert.deepStrictEqual(parse(latex), expected)
   })
 
   it('parse roots', () => {
@@ -181,7 +181,7 @@ describe('latex lexer', () => {
       },
     ]
 
-    assert.deepEqual(parse(latex), expected)
+    assert.deepStrictEqual(parse(latex), expected)
   })
 
   describe('error handling', () => {

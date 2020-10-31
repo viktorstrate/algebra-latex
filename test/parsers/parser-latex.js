@@ -11,7 +11,7 @@ describe('latex parser', () => {
   it('parse simple expression', () => {
     const latex = '\\frac{1}{2} + \\sqrt{2} \\cdot 4'
 
-    assert.deepEqual(parser(latex), {
+    assert.deepStrictEqual(parser(latex), {
       type: 'operator',
       operator: 'plus',
       lhs: {
@@ -50,7 +50,7 @@ describe('latex parser', () => {
 
     let parsed = parser(latex)
 
-    assert.deepEqual(parsed, {
+    assert.deepStrictEqual(parsed, {
       type: 'operator',
       operator: 'multiply',
       lhs: {
@@ -120,7 +120,7 @@ describe('latex parser', () => {
     it('operators with groups', () => {
       const latex = '3*(4+2)*{3+4}'
 
-      assert.deepEqual(parser(latex), {
+      assert.deepStrictEqual(parser(latex), {
         type: 'operator',
         operator: 'multiply',
         lhs: {
@@ -161,7 +161,7 @@ describe('latex parser', () => {
     it('parse expression starting with a group', () => {
       const latex = '{3+4}*5'
 
-      assert.deepEqual(parser(latex), {
+      assert.deepStrictEqual(parser(latex), {
         type: 'operator',
         operator: 'multiply',
         lhs: {
@@ -187,7 +187,7 @@ describe('latex parser', () => {
   it('parse implicit parenthesis multiplication', () => {
     const latex = '6\\left(5+\\left(2\\right)\\left(6\\right)\\right)8'
 
-    assert.deepEqual(parser(latex), {
+    assert.deepStrictEqual(parser(latex), {
       lhs: {
         type: 'number',
         value: 6,
@@ -228,7 +228,7 @@ describe('latex parser', () => {
   it('parse exponent examples', () => {
     const latex = '3^2*a^{2*4}*b^(2)3'
 
-    assert.deepEqual(parser(latex), {
+    assert.deepStrictEqual(parser(latex), {
       type: 'operator',
       operator: 'multiply',
       lhs: {
@@ -293,7 +293,7 @@ describe('latex parser', () => {
   it('parse cubic root', () => {
     const latex = '\\sqrt[3]{2}'
 
-    assert.deepEqual(parser(latex), {
+    assert.deepStrictEqual(parser(latex), {
       type: 'operator',
       operator: 'exponent',
       lhs: {
@@ -318,7 +318,7 @@ describe('latex parser', () => {
   it('parse modulus', () => {
     const latex = '3\\mod5'
 
-    assert.deepEqual(parser(latex), {
+    assert.deepStrictEqual(parser(latex), {
       type: 'operator',
       operator: 'modulus',
       lhs: {
@@ -336,7 +336,7 @@ describe('latex parser', () => {
     it('parse variables with underscores', () => {
       const latex = 't_{last}-t_{first_a}'
 
-      assert.deepEqual(parser(latex), {
+      assert.deepStrictEqual(parser(latex), {
         type: 'operator',
         operator: 'minus',
         lhs: {
@@ -375,7 +375,7 @@ describe('latex parser', () => {
       it('parse multiple character variables', () => {
         const latex = 'var+a var'
 
-        assert.deepEqual(parser(latex), {
+        assert.deepStrictEqual(parser(latex), {
           type: 'operator',
           operator: 'plus',
           lhs: {
@@ -400,7 +400,7 @@ describe('latex parser', () => {
       it('parse variables with spaces in between', () => {
         const latex = 'a \\ \\qquad b'
 
-        assert.deepEqual(parser(latex), {
+        assert.deepStrictEqual(parser(latex), {
           type: 'operator',
           operator: 'multiply',
           lhs: {
@@ -419,7 +419,7 @@ describe('latex parser', () => {
       it('should parse lower case', () => {
         const latex = '\\alpha\\delta\\gamma'
 
-        assert.deepEqual(parser(latex), {
+        assert.deepStrictEqual(parser(latex), {
           type: 'operator',
           operator: 'multiply',
           lhs: {
@@ -444,7 +444,7 @@ describe('latex parser', () => {
       it('parse upper case', () => {
         const latex = '\\Alpha\\Delta\\Gamma'
 
-        assert.deepEqual(parser(latex), {
+        assert.deepStrictEqual(parser(latex), {
           type: 'operator',
           operator: 'multiply',
           lhs: {
@@ -473,7 +473,7 @@ describe('latex parser', () => {
       const latex =
         '\\sin (3*4) * \\cos{5} \\tan 6var + \\arcsin\\left( 45 \\right )'
 
-      assert.deepEqual(parser(latex), {
+      assert.deepStrictEqual(parser(latex), {
         type: 'operator',
         operator: 'plus',
         lhs: {
@@ -538,7 +538,7 @@ describe('latex parser', () => {
     it('parse negated function "-sin(x)"', () => {
       const latex = '-\\sin\\left( x \\right)'
 
-      assert.deepEqual(parser(latex), {
+      assert.deepStrictEqual(parser(latex), {
         type: 'uni-operator',
         operator: 'minus',
         value: {
@@ -554,7 +554,7 @@ describe('latex parser', () => {
   })
 
   it('parse double fraction', () => {
-    assert.deepEqual(parser('1/2/4'), {
+    assert.deepStrictEqual(parser('1/2/4'), {
       type: 'operator',
       operator: 'divide',
       lhs: {
@@ -575,7 +575,7 @@ describe('latex parser', () => {
       },
     })
 
-    assert.deepEqual(parser('1/2/4/8'), {
+    assert.deepStrictEqual(parser('1/2/4/8'), {
       type: 'operator',
       operator: 'divide',
       lhs: {
@@ -604,7 +604,7 @@ describe('latex parser', () => {
       },
     })
 
-    assert.deepEqual(parser('1/2*4'), {
+    assert.deepStrictEqual(parser('1/2*4'), {
       type: 'operator',
       operator: 'multiply',
       lhs: {
@@ -630,7 +630,7 @@ describe('latex parser', () => {
     it('parse simple equation', () => {
       const latex = 'y=a x + b'
 
-      assert.deepEqual(parser(latex), {
+      assert.deepStrictEqual(parser(latex), {
         type: 'equation',
         lhs: {
           type: 'variable',
