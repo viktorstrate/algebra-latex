@@ -56,8 +56,9 @@ export default class ParserLatex {
     }
 
     throw Error(
-      `Parser error\n${line}\n${spacing}^\nError at line: ${this.lexer.line +
-        1} col: ${this.lexer.col + 1}\n${message}`
+      `Parser error\n${line}\n${spacing}^\nError at line: ${
+        this.lexer.line + 1
+      } col: ${this.lexer.col + 1}\n${message}`
     )
   }
 
@@ -350,31 +351,40 @@ export default class ParserLatex {
   }
 
   operator_divide() {
-    // operator_divide : operator_mod ( DIVIDE operator_divide )?
+    // operator_divide : operator_mod operator_divide_prime
 
-    debug('op div left')
+    debug('operator_divide')
 
     let lhs = this.operator_mod()
+
+    const divideResult = this.operator_divide_prime(lhs)
+
+    return divideResult
+  }
+
+  operator_divide_prime(lhs) {
+    // operator_divide_prime : epsilon | DIVIDE operator_mod operator_divide_prime
+
     let op = this.peek()
 
     if (op.type != 'operator' || op.value != 'divide') {
-      debug('divide only left side')
+      debug('operator_divide_prime - epsilon')
       return lhs
     } else {
       // Operator token
       this.next_token()
     }
 
-    debug('op div right')
+    debug('operator_divide_prime - next operator')
 
-    let rhs = this.operator_divide()
+    let rhs = this.operator_mod()
 
-    return {
+    return this.operator_divide_prime({
       type: 'operator',
       operator: 'divide',
       lhs,
       rhs,
-    }
+    })
   }
 
   operator_mod() {

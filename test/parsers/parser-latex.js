@@ -3,7 +3,7 @@ import LatexLexer from '../../src/lexers/LexerLatex'
 import assert from 'assert'
 
 describe('latex parser', () => {
-  let parser = latex => {
+  let parser = (latex) => {
     let lexerLatex = new Parser(latex, LatexLexer)
     return lexerLatex.parse()
   }
@@ -550,6 +550,79 @@ describe('latex parser', () => {
           },
         },
       })
+    })
+  })
+
+  it('parse double fraction', () => {
+    assert.deepEqual(parser('1/2/4'), {
+      type: 'operator',
+      operator: 'divide',
+      lhs: {
+        type: 'operator',
+        operator: 'divide',
+        lhs: {
+          type: 'number',
+          value: 1,
+        },
+        rhs: {
+          type: 'number',
+          value: 2,
+        },
+      },
+      rhs: {
+        type: 'number',
+        value: 4,
+      },
+    })
+
+    assert.deepEqual(parser('1/2/4/8'), {
+      type: 'operator',
+      operator: 'divide',
+      lhs: {
+        type: 'operator',
+        operator: 'divide',
+        lhs: {
+          type: 'operator',
+          operator: 'divide',
+          lhs: {
+            type: 'number',
+            value: 1,
+          },
+          rhs: {
+            type: 'number',
+            value: 2,
+          },
+        },
+        rhs: {
+          type: 'number',
+          value: 4,
+        },
+      },
+      rhs: {
+        type: 'number',
+        value: 8,
+      },
+    })
+
+    assert.deepEqual(parser('1/2*4'), {
+      type: 'operator',
+      operator: 'multiply',
+      lhs: {
+        type: 'operator',
+        operator: 'divide',
+        lhs: {
+          type: 'number',
+          value: 1,
+        },
+        rhs: {
+          type: 'number',
+          value: 2,
+        },
+      },
+      rhs: {
+        type: 'number',
+        value: 4,
+      },
     })
   })
 
