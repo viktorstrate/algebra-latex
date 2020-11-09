@@ -182,6 +182,39 @@ describe('latex parser', () => {
         },
       })
     })
+
+    it('parse implicit multiply', () => {
+      const latex = '(a+1)(b+1)'
+
+      assert.deepStrictEqual(parser(latex), {
+        type: 'operator',
+        operator: 'multiply',
+        lhs: {
+          type: 'operator',
+          operator: 'plus',
+          lhs: {
+            type: 'variable',
+            value: 'a',
+          },
+          rhs: {
+            type: 'number',
+            value: 1,
+          },
+        },
+        rhs: {
+          type: 'operator',
+          operator: 'plus',
+          lhs: {
+            type: 'variable',
+            value: 'b',
+          },
+          rhs: {
+            type: 'number',
+            value: 1,
+          },
+        },
+      })
+    })
   })
 
   it('parse implicit parenthesis multiplication', () => {
@@ -225,45 +258,23 @@ describe('latex parser', () => {
     })
   })
 
-  it('parse exponent examples', () => {
-    const latex = '3^2*a^{2*4}*b^(2)3'
+  describe('exponents', () => {
+    it('parse exponent examples', () => {
+      const latex1 = '3^2*a^{2*4}*b^(2)3'
 
-    assert.deepStrictEqual(parser(latex), {
-      type: 'operator',
-      operator: 'multiply',
-      lhs: {
-        type: 'operator',
-        operator: 'exponent',
-        lhs: {
-          type: 'number',
-          value: 3,
-        },
-        rhs: {
-          type: 'number',
-          value: 2,
-        },
-      },
-      rhs: {
+      assert.deepStrictEqual(parser(latex1), {
         type: 'operator',
         operator: 'multiply',
         lhs: {
           type: 'operator',
           operator: 'exponent',
           lhs: {
-            type: 'variable',
-            value: 'a',
+            type: 'number',
+            value: 3,
           },
           rhs: {
-            type: 'operator',
-            operator: 'multiply',
-            lhs: {
-              type: 'number',
-              value: 2,
-            },
-            rhs: {
-              type: 'number',
-              value: 4,
-            },
+            type: 'number',
+            value: 2,
           },
         },
         rhs: {
@@ -274,19 +285,68 @@ describe('latex parser', () => {
             operator: 'exponent',
             lhs: {
               type: 'variable',
-              value: 'b',
+              value: 'a',
             },
             rhs: {
-              type: 'number',
-              value: 2,
+              type: 'operator',
+              operator: 'multiply',
+              lhs: {
+                type: 'number',
+                value: 2,
+              },
+              rhs: {
+                type: 'number',
+                value: 4,
+              },
             },
           },
           rhs: {
-            type: 'number',
-            value: 3,
+            type: 'operator',
+            operator: 'multiply',
+            lhs: {
+              type: 'operator',
+              operator: 'exponent',
+              lhs: {
+                type: 'variable',
+                value: 'b',
+              },
+              rhs: {
+                type: 'number',
+                value: 2,
+              },
+            },
+            rhs: {
+              type: 'number',
+              value: 3,
+            },
           },
         },
-      },
+      })
+    })
+
+    it('parse exponent of group', () => {
+      const latex2 = '(1+2)^3'
+
+      assert.deepStrictEqual(parser(latex2), {
+        type: 'operator',
+        operator: 'exponent',
+        lhs: {
+          type: 'operator',
+          operator: 'plus',
+          lhs: {
+            type: 'number',
+            value: 1,
+          },
+          rhs: {
+            type: 'number',
+            value: 2,
+          },
+        },
+        rhs: {
+          type: 'number',
+          value: 3,
+        },
+      })
     })
   })
 

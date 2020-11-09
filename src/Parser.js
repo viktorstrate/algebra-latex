@@ -307,13 +307,7 @@ export default class ParserLatex {
 
     debug('op mul left')
 
-    let lhs
-
-    if (this.peek().type == 'bracket') {
-      lhs = this.group()
-    } else {
-      lhs = this.operator_divide()
-    }
+    let lhs = this.operator_divide()
 
     let op = this.peek()
 
@@ -449,6 +443,7 @@ export default class ParserLatex {
   }
 
   subscript() {
+    // subscript : number ( SUBSCRIPT subscript )?
     const base_num = this.number()
 
     if (this.peek().type == 'underscore') {
